@@ -1,16 +1,61 @@
-# TMM_OLEDPixel
-The purpose of this repo is to store my scripts for performing simulations of OLEDs in tmm to enhance their outcoupling efficiency and determine their wavelength-dependent outcoupling, chromaticity coordinates, etc.
+# Multilayer OLED transfer-matrix and Green-function explorations
 
+Python scripts and Mathematica notebook revisions exploring multilayer optics, polarization, wavelength dependence, and OLED outcoupling concepts.
 
-Project: Mathematica_python_TMM_OLEDPixel
+## Functions and engineering applications
+
+| Source / interface | Observed function | Inferred application |
+|---|---|---|
+| `python_tmm_oled_Green'sfcnApproach.py`: `OLEDOutcouplingTMM` | Layer definitions, aluminum Drude model, interface/propagation matrices, angle/wavelength calculations | Exploring material and thickness sensitivity in OLED stacks [1] |
+| `oled_outcoupling_simulation.py`: `transfer_matrix_method(...)` | Normal-incidence characteristic-matrix calculation | Teaching and checking thin-film interference concepts [1] |
+| `tmm_OLED8.py`, `tmm_OLED9.py` | Wavelength/angle/thickness sweeps and image output | Exploratory design maps, after correcting implementation issues |
+| `TMMandGreensFunctions*.nb`, `mathematica_tmm_oled.txt` | Symbolic/numerical multilayer and Green-function formulations | Comparing analytical formulations with numerical solvers [1,2] |
+
+These are research prototypes. The class filename does not establish a complete dyadic Green-function emission calculation: its efficiency method explicitly uses a simplified transmission-amplitude approach.
+
+## Example function calls
+
+Python examples require NumPy, SciPy, and Matplotlib; the separate sweep scripts may also require `tmm`. The following uses the actual class API and avoids executing its full plotting sweep:
+
+```python
+import importlib.util
+from pathlib import Path
+path = Path("python_tmm_oled_Green'sfcnApproach.py")
+spec = importlib.util.spec_from_file_location("oled_model", path)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+oled = module.OLEDOutcouplingTMM()
+oled.define_oled_structure()
+value = oled.outcoupling_efficiency_angle_wavelength(550.0, 0.0)
+print(value)  # Model output; not a validated device efficiency.
+```
+
+A smoke run of this class example completed during the review and returned approximately `7.22e-54`; that demonstrates execution only, not physical accuracy. Wavelength arguments are nm and angle arguments are degrees. The structure must be initialized before calling the angle/wavelength method. To launch its built-in plots instead:
+
+```bash
+python "python_tmm_oled_Green'sfcnApproach.py"
+```
+
+For notebook exploration, open `TMMandGreensFunctions.nb` in Mathematica and inspect/evaluate initialization and parameter cells before the dependent cells. There is no uniform package-level Wolfram API.
+
+## Known issues and interpretation
+
+`oled_outcoupling_simulation.py` mixes a wavelength in nm with layer thickness converted to meters inside the phase calculation. `tmm_OLED9.py` calls `coh_tmm` without importing it, constructs incompatible layer/index lists, and passes wavelength/angle arguments in an order that needs correction against the dependency API. These examples must be repaired before numerical interpretation. The class uses approximate material constants, simplifies emission to transmission, and catches calculation exceptions by returning zero for a polarization; a zero is therefore not conclusive evidence of no emitted power. None of these scripts was validated against experimental OLED data in this review. Check lossless energy balance, single-interface Fresnel limits, absorbing-media conventions, and agreement with an independent solver before design optimization.
+
+## Review scope and software citation
+
+Documentation reviewed on 2026-10-08 against source commit [`b4adb4a1d758`](https://github.com/gmongell/Mathematica_python_TMM_OLEDPixel/tree/b4adb4a1d758cf3a7a19148929c4e9a8bfdcdc05). “Observed” means supported by source inspection; engineering applications are reasoned possibilities unless explicitly demonstrated. Scholarly references provide methodological context and do not certify these implementations. Runtime validation is stated separately above.
+
+For software attribution, cite Guy Francis Mongelli, *Mathematica_python_TMM_OLEDPixel*, the [repository](https://github.com/gmongell/Mathematica_python_TMM_OLEDPixel), the exact commit used, and your access date. Also cite the relevant method publications and any original third-party contributors. No unverified software DOI or release version is assigned by this documentation.
+
+## Scholarly references
+
+1. S. J. Byrnes (2016; revised 2020). “Multilayer optical calculations.” *arXiv:1603.02720*, preprint. [DOI: 10.48550/arXiv.1603.02720](https://doi.org/10.48550/arXiv.1603.02720). Reference for planar transfer matrices, polarization, absorption, and power normalization; it is not a validation of the repository’s emitter models.
+
+2. A. F. Oskooi et al. (2010). “Meep: A flexible free-software package for electromagnetic simulations by the FDTD method.” *Computer Physics Communications* 181, 687–702. [DOI: 10.1016/j.cpc.2009.11.008](https://doi.org/10.1016/j.cpc.2009.11.008). Method/software reference for FDTD, dispersive media, sources, and boundary conditions.
+
+## Ownership and existing license notices
+
 Copyright (c) 2025 Guy Francis Mongelli
 
-This project is licensed under the Apache License, Version 2.0.
-If you use this software in academic work, please cite the repository and the associated paper (see CITATION.cff and README).
-
-Selected components may include third-party code; see LICENSE headers in individual files.
-
-
-**Licensing.** Code (Python/Mathematica) is licensed under **Apache-2.0**.  
-Documentation, prose, and figures are licensed under **CC BY 4.0**.  
-In notebooks, code cells are Apache-2.0; narrative text/figures are CC BY 4.0.
+The existing project notice declares Apache License 2.0 for project code. Documentation, prose, and figures are declared CC BY 4.0; notebook code cells are Apache-2.0 and narrative/figures CC BY 4.0. Preserve all file-level and third-party notices. This README update does not change ownership or licensing terms.
