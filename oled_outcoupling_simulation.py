@@ -27,6 +27,10 @@ n_medium = 1.0
 n_substrate = 1.5
 
 def transfer_matrix_method(wavelength, n_layers, k_layers, thicknesses, n_medium, n_substrate):
+    if wavelength <= 0 or len(n_layers) != len(k_layers) or len(n_layers) != len(thicknesses):
+        raise ValueError('Positive wavelength and equal-length layer arrays required')
+    if any(d < 0 for d in thicknesses):
+        raise ValueError('Layer thicknesses must be nonnegative')
     # Calculate the complex refractive index for each layer
     n_complex = [n(wavelength) + 1j * k(wavelength) for n, k in zip(n_layers, k_layers)]
     
