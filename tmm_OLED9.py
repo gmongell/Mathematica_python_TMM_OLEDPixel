@@ -1,80 +1,65 @@
+"""Illustrative plane-wave transmission through an Alq3/silver stack.
+
+Requires: numpy, matplotlib, tmm (pip install tmm).
+All lengths, including wavelength and layer thickness, are in nanometers.
+The toy refractive-index formulas are not experimentally validated dispersion.
+Transmission is NOT OLED dipole outcoupling efficiency.
+"""
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')  # Use Agg backend for headless environments
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from tmm import coh_tmm
 
-# Dispersion relationships for materials
-def n_alq3(wavelength):
-    A = 1.65
-    B = 0.5  # Adjust as necessary
-    return A + B / (wavelength ** 2)
 
-def n_silver(wavelength):
-    n_0 = 0.16  # Real part
-    kappa = 3.16  # Imaginary part
-    C = 1.5  # Coefficient for the dispersion
-    return n_0 - (C / (wavelength ** 2)) + 1j * kappa
+def n_alq3(wavelength_nm):
+    return 1.65 + 0.5 / wavelength_nm**2
 
-# Wavelength and angle ranges
-wavelengths = np.linspace(400, 700, 1000)  # Wavelength range (in nm)
-theta_list_deg = np.linspace(0, 90, 180)  # Angles from 0 to 90 degrees
-theta_list_rad = np.radians(theta_list_deg)  # Convert to radians
 
-# Set thickness range for the organic layer (e.g., Alq3) in nanometers
-thicknesses = np.linspace(25, 150, 10)  # Example thickness values, from 50nm to 200nm
+def n_silver(wavelength_nm):
+    return 0.16 - 1.5 / wavelength_nm**2 + 3.16j
 
-# Loop over different thickness values of the organic layer
-for thickness in thicknesses:
-    # Initialize the outcoupling efficiency array for this thickness
-    outcoupling_efficiency_2D = np.zeros((len(wavelengths), len(theta_list_deg)))
 
-    # Create the n_list for the current wavelength range and thickness
-    n_air = 1.0  # Refractive index of air
-    n_list = [n_air]  # Start with air
-    for wavelength in wavelengths:
-        n_list.append(n_alq3(wavelength))  # Alq3 layer refractive index
-    n_list.append(n_silver(wavelengths[-1]))  # Silver refractive index at last wavelength
+def calculate_transmission(wavelengths_nm, angles_deg, thickness_nm, silver_nm=50.0):
+    """Return unpolarized plane-wave power transmission [wavelength, angle]."""
+    wavelengths_nm = np.asarray(wavelengths_nm, dtype=float)
+    angles_deg = np.asarray(angles_deg, dtype=float)
+    if wavelengths_nm.ndim != 1 or angles_deg.ndim != 1:
+        raise ValueError("Wavelengths and angles must be one-dimensional")
+    if not np.all(np.isfinite(wavelengths_nm)) or np.any(wavelengths_nm <= 0):
+        raise ValueError("Wavelengths must be finite and positive")
+    if not np.all(np.isfinite(angles_deg)) or np.any((angles_deg < 0) | (angles_deg >= 90)):
+        raise ValueError("Incidence angles must be in [0, 90) degrees")
+    if not np.isfinite(thickness_nm) or not np.isfinite(silver_nm) or min(thickness_nm, silver_nm) < 0:
+        raise ValueError("Thicknesses must be finite and nonnegative")
 
-    # Set the layer thickness values
-    d_alq3 = thickness * 1e-9  # Convert nm to meters
-    d_silver = 50e-9  # 50 nm for Silver
-    d_list = [np.inf, d_alq3, d_silver, np.inf]  # Air, Alq3, Silver, and back air
+    result = np.empty((len(wavelengths_nm), len(angles_deg)))
+    d_list = [np.inf, float(thickness_nm), float(silver_nm), np.inf]
+    for i, wavelength_nm in enumerate(wavelengths_nm):
+        # coh_tmm requires one refractive index per layer, evaluated at this wavelength.
+        n_list = [1.0, n_alq3(wavelength_nm), n_silver(wavelength_nm), 1.0]
+        for j, theta_deg in enumerate(angles_deg):
+            theta = np.deg2rad(theta_deg)
+            ts = coh_tmm("s", n_list, d_list, wavelength_nm, theta)["T"]
+            tp = coh_tmm("p", n_list, d_list, wavelength_nm, theta)["T"]
+            result[i, j] = 0.5 * (ts + tp)
+    return result
 
-    # Loop over each wavelength and angle to compute the outcoupling efficiency
-    for i, wavelength in enumerate(wavelengths):
-        R_TE, T_TE, R_TM, T_TM = [], [], [], []
-        
-        for theta in theta_list_rad:
-            # Ensure angle is valid for first layer (Alq3)
-            if theta < np.arcsin(n_air / np.abs(n_list[1])):
-                # TE polarization (s-polarized light)
-                coh_TE = coh_tmm('s', n_list, d_list, wavelength * 1e-9, theta)
-                R_TE.append(coh_TE['R'])
-                T_TE.append(coh_TE['T'])
 
-                # TM polarization (p-polarized light)
-                coh_TM = coh_tmm('p', n_list, d_list, wavelength * 1e-9, theta)
-                R_TM.append(coh_TM['R'])
-                T_TM.append(coh_TM['T'])
-            else:
-                R_TE.append(1.0)  # Total reflection
-                T_TE.append(0.0)  # No transmission
-                R_TM.append(1.0)  # Total reflection
-                T_TM.append(0.0)  # No transmission
+def main():
+    wavelengths_nm = np.linspace(400, 700, 100)
+    angles_deg = np.linspace(0, 89, 90)
+    for thickness_nm in np.linspace(25, 150, 10):
+        transmission = calculate_transmission(wavelengths_nm, angles_deg, thickness_nm)
+        fig, ax = plt.subplots(figsize=(10, 6))
+        image = ax.contourf(angles_deg, wavelengths_nm, transmission, levels=50)
+        fig.colorbar(image, ax=ax, label="Unpolarized plane-wave transmittance")
+        ax.set_xlabel("Angle of incidence (degrees)")
+        ax.set_ylabel("Wavelength (nm)")
+        ax.set_title(f"Alq3 thickness = {thickness_nm:.1f} nm; illustrative indices")
+        fig.savefig(f"transmittance_thickness_{thickness_nm:.1f}nm.png")
+        plt.close(fig)
 
-        # Combine TE and TM transmission efficiencies to compute the outcoupling efficiency
-        outcoupling_efficiency = np.array(T_TE) + np.array(T_TM)
-        outcoupling_efficiency_2D[i, :] = outcoupling_efficiency
 
-    # Plotting the outcoupling efficiency for this thickness as a heatmap
-    plt.figure(figsize=(10, 6))
-    plt.contourf(theta_list_deg, wavelengths, outcoupling_efficiency_2D, levels=50, cmap='viridis')
-    plt.colorbar(label='Outcoupling Efficiency')
-    plt.xlabel('Angle of Incidence (degrees)')
-    plt.ylabel('Wavelength (nm)')
-    plt.title(f'Outcoupling Efficiency (Alq3 Thickness = {thickness:.1f} nm)')
-
-    # Save the plot as an image file
-    plt.savefig(f'outcoupling_efficiency_thickness_{thickness:.1f}nm.png')
-    plt.close()  # Close the figure to free up memory
-
+if __name__ == "__main__":
+    main()
