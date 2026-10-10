@@ -23,7 +23,7 @@ def reference_spectrum(wavelengths_nm):
     w = np.asarray(wavelengths_nm, dtype=float)
     s = sum(a * np.exp(-0.5 * ((w - mu) / sigma)**2)
             for a, mu, sigma in zip(WEIGHTS, CENTERS_NM, WIDTHS_NM))
-    return s / np.trapezoid(s, w)
+    return s / np.trapz(s, w)
 
 
 def evaluate_proxy(thickness_nm, silver_nm, wavelengths_nm, angles_deg, spectrum=None):
@@ -45,18 +45,18 @@ def evaluate_proxy(thickness_nm, silver_nm, wavelengths_nm, angles_deg, spectrum
     s = reference_spectrum(w) if spectrum is None else np.asarray(spectrum, float)
     if s.shape != w.shape or not np.all(np.isfinite(s)) or np.any(s < 0):
         raise ValueError("Spectrum must be finite, nonnegative, and match wavelengths")
-    norm = np.trapezoid(s, w)
+    norm = np.trapz(s, w)
     if norm <= 0:
         raise ValueError("Spectrum integral must be positive")
     s = s / norm
     t = calculate_transmission(w, a, thickness_nm, silver_nm)
-    spectral_t = np.trapezoid(t * s[:, None], w, axis=0)
+    spectral_t = np.trapz(t * s[:, None], w, axis=0)
     theta = np.deg2rad(a)
     solid_weight = np.sin(theta)
     projection_weight = solid_weight * np.cos(theta)
-    flux = np.trapezoid(spectral_t * projection_weight, theta) / np.trapezoid(projection_weight, theta)
-    mean = np.trapezoid(spectral_t * solid_weight, theta) / np.trapezoid(solid_weight, theta)
-    variance = np.trapezoid((spectral_t - mean)**2 * solid_weight, theta) / np.trapezoid(solid_weight, theta)
+    flux = np.trapz(spectral_t * projection_weight, theta) / np.trapz(projection_weight, theta)
+    mean = np.trapz(spectral_t * solid_weight, theta) / np.trapz(solid_weight, theta)
+    variance = np.trapz((spectral_t - mean)**2 * solid_weight, theta) / np.trapz(solid_weight, theta)
     cv = float(np.sqrt(max(variance, 0.0)) / max(mean, 1e-12))
     return {"hemispherical_transmission_proxy": float(flux),
             "angular_coefficient_of_variation": cv,
