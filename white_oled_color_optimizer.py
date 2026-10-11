@@ -24,7 +24,7 @@ def evaluate_design(alq3_nm, silver_nm, wavelengths_nm, angles_deg, cmf):
 
 def optimize_color_uniformity(wavelengths_nm, angles_deg, cmf, angular_penalty=0.2,
                               color_penalty=10.0, maxiter=25, seed=7):
-    if angular_penalty < 0 or color_penalty < 0:
+    if not np.isfinite(angular_penalty) or not np.isfinite(color_penalty) or angular_penalty < 0 or color_penalty < 0:
         raise ValueError("Penalties must be nonnegative")
     def objective(x):
         metrics = evaluate_design(x[0], x[1], wavelengths_nm, angles_deg, cmf)
