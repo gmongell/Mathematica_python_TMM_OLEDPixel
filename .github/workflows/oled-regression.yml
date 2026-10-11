@@ -27,6 +27,6 @@ jobs:
         run: python -m pip install -r requirements-oled.txt
       - name: Compile changed Python modules
         run: |
-          python -m py_compile tmm_OLED9.py white_oled_proxy_optimizer.py white_oled_colorimetry.py white_oled_color_optimizer.py oled_outcoupling_simulation.py dipole_reference_patterns.py
+          python -m py_compile tmm_OLED9.py white_oled_proxy_optimizer.py white_oled_colorimetry.py white_oled_color_optimizer.py oled_outcoupling_simulation.py dipole_reference_patterns.py dipole_analytic_cone.py
       - name: Run regression tests
         run: python -m unittest discover -s tests -v
