@@ -40,8 +40,8 @@ def calculate_transmission(wavelengths_nm, angles_deg, thickness_nm, silver_nm=5
         n_list = [1.0, n_alq3(wavelength_nm), n_silver(wavelength_nm), 1.0]
         for j, theta_deg in enumerate(angles_deg):
             theta = np.deg2rad(theta_deg)
-            ts = coh_tmm("s", n_list, d_list, wavelength_nm, theta)["T"]
-            tp = coh_tmm("p", n_list, d_list, wavelength_nm, theta)["T"]
+            ts = coh_tmm("s", n_list, d_list, theta, wavelength_nm)["T"]
+            tp = coh_tmm("p", n_list, d_list, theta, wavelength_nm)["T"]
             result[i, j] = 0.5 * (ts + tp)
     return result
 
