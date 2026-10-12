@@ -27,6 +27,10 @@ n_medium = 1.0
 n_substrate = 1.5
 
 def transfer_matrix_method(wavelength, n_layers, k_layers, thicknesses, n_medium, n_substrate):
+    if not np.isfinite(wavelength) or wavelength <= 0 or len(n_layers) != len(k_layers) or len(n_layers) != len(thicknesses):
+        raise ValueError('Positive wavelength and equal-length layer arrays required')
+    if any(not np.isfinite(d) or d < 0 for d in thicknesses):
+        raise ValueError('Layer thicknesses must be nonnegative')
     # Calculate the complex refractive index for each layer
     n_complex = [n(wavelength) + 1j * k(wavelength) for n, k in zip(n_layers, k_layers)]
     
@@ -41,7 +45,7 @@ def transfer_matrix_method(wavelength, n_layers, k_layers, thicknesses, n_medium
     # Loop through each layer and calculate the transfer matrix
     for i in range(len(n_complex)):
         n_layer = n_complex[i]
-        d_layer = thicknesses[i] * 1e-9  # Convert thickness to meters
+        d_layer = thicknesses[i]  # Thickness and wavelength are both in nm
         
         # Calculate the phase shift in the layer
         delta = k0 * n_layer * d_layer * np.cos(theta_inc)
@@ -67,18 +71,18 @@ def transfer_matrix_method(wavelength, n_layers, k_layers, thicknesses, n_medium
     R = np.abs(r)**2
     T = np.abs(t)**2 * (n_sub / n_inc).real
     
-    # The outcoupling efficiency is equivalent to the transmittance in this simplified model
-    return T
+    # Plane-wave transmittance, NOT dipole-emission OLED outcoupling efficiency.
+    return float(T.real)
 
-# Calculate outcoupling efficiency for each wavelength
-outcoupling_efficiency = [
+# Calculate plane-wave transmittance for each wavelength
+plane_wave_transmittance = [
     transfer_matrix_method(wl, n_layers, k_layers, thicknesses, n_medium, n_substrate) for wl in wavelengths
 ]
 
 # Plot the results
-plt.plot(wavelengths, outcoupling_efficiency)
+plt.plot(wavelengths, plane_wave_transmittance)
 plt.xlabel('Wavelength (nm)')
-plt.ylabel('Outcoupling Efficiency')
-plt.title('Wavelength-Dependent Outcoupling Efficiency of OLED')
+plt.ylabel('Plane-wave transmittance')
+plt.title('Normal-incidence multilayer transmittance (illustrative)')
 plt.grid(True)
 plt.show()

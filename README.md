@@ -68,3 +68,56 @@ The existing project notice declares Apache License 2.0 for project code. Docume
 - **Scientific citations:** References above identify relevant governing methods and computational background; citing a publication does not imply that its algorithm is implemented in this repository or that the publication was authored by this repository owner.
 - **Missing or null artifacts:** Empty, placeholder, missing, or non-executable source files must not be represented as functional implementations. Candidate restorations from personal archives require provenance, content comparison, license review, and explicit verification before committing code.
 - **Access model:** This repository is publicly readable. Public visibility does not grant anonymous push rights; write access is controlled separately through repository collaborators, credentials, apps, deploy keys, and branch rules. This README is descriptive and does not itself enforce permissions.
+
+
+## Optical-constant databases and integration roadmap (2026-10)
+
+The resources below are **major, useful optical-constant collections**, not a
+verified ranking by record count: catalog sizes, material coverage, licensing,
+and access terms are not directly comparable. Always retain the original
+dataset, publication citation, measurement conditions, and source version.
+
+| Resource | Official link | Strength / relevance to OLED stacks | Access / integration note |
+|---|---|---|---|
+| **RefractiveIndex.INFO** | [Website](https://refractiveindex.info/) · [GitHub database](https://github.com/polyanskiy/refractiveindex.info-database) · [releases](https://github.com/polyanskiy/refractiveindex.info-database/releases) | Broad, literature-sourced optical constants including metals, dielectrics, semiconductors and some organics; **first choice** for automated research integration | Database is **CC0**; YAML datasets may contain tabulated n,k or dispersion formulas. Pin a release/commit, record the selected *material/book/page* and primary literature reference. |
+| **KLA / Filmetrics Refractive Index Database** | [Database](https://www.kla.com/products/instruments/refractive-index-database/Schott%2BN-SF10) | Large practical thin-film material catalog, including ITO, Ag, Al, SiO2, Si3N4 | Some datasets are proprietary or require a request; check reuse terms before downloading or redistributing. |
+| **SCHOTT Optical Glass Catalog** | [Official downloads](https://www.schott.com/en-gb/products/optical-glass-p1000267/downloads) | Manufacturer dispersion and transmission for substrate and encapsulation glass | XLSX, optical-design formats and datasheets; formulas may need sampling onto the model's wavelength grid. Not an OLED organic-emitter n,k source. |
+| **OHARA Optical Glass Catalog** | [Official downloads](https://www.ohara-inc.co.jp/en/product/catalog/) | Extensive glass dispersion data for substrates and optical components | CSV/XLSX and optical-design catalogs; check material-specific spectral validity and license. |
+| **NASA Optical Constants Database (OCdb)** | [Official database](https://ocdb.smce.nasa.gov/) | Published n,k datasets, particularly ices, tholins and planetary/astro materials | Useful specialized reference, **not** a primary source for OLED device films. |
+| **NIST optical-constants research** | [NIST program](https://www.nist.gov/programs-projects/calculation-optical-constants-and-dielectric-response) | Computational dielectric-response methods and cross-checking | Research portal rather than a general downloadable OLED n,k catalog. |
+
+### Recommended data pipeline
+
+1. Prefer **RefractiveIndex.INFO** for initial reproducible n,k ingestion, then
+   compare at least one independent experimental dataset for each critical
+   material. Use original peer-reviewed measurements for Alq3, emissive
+   organics, ITO, Ag, and other stack layers whenever available.
+2. Record **material name, source URL, publication DOI, dataset ID/page, source
+   commit or release, film preparation, substrate, temperature, spectral
+   interval, and license**. Different deposition conditions can produce
+   substantially different n,k, especially for ITO and thin metals.
+3. Convert selected **tabulated** data to a CSV with header
+   `wavelength_nm,n,k`, ordered by increasing wavelength. The repository's
+   `OpticalConstants.from_csv(path)` accepts this format; its
+   `evaluate(wavelength_nm)` returns `n + 1j*k`, with no extrapolation.
+   Formula-only data requires evaluation with its documented dispersion
+   equation before CSV export. No direct YAML importer is implemented yet.
+4. Preserve the passive-medium sign convention `n+ik` for
+   `exp(-i omega t)`. Check wavelength units (nm vs micrometers), coverage,
+   interpolation artifacts, and energy balance `R + T + A = 1` for
+   non-scattering stacks. Avoid using bulk metal n,k as an unqualified model
+   for ultrathin or discontinuous films.
+5. Run wavelength/angle TMM benchmarks and sensitivity analysis across
+   **alternative measured datasets** before any optimization. Plane-wave
+   transmittance is **not** OLED dipole outcoupling or external quantum
+   efficiency.
+
+**Current implementation status:** `optical_constants.py` provides
+validated CSV ingestion and bounded interpolation; automatic database
+download, YAML/dispersion-formula parsing, per-layer assignment in the
+OLED solver, and measurement-based model validation remain future work.
+Do not treat the illustrative Alq3/silver formulas in `tmm_OLED9.py`
+as experimental optical constants.
+
+Useful scholarly attribution: M. N. Polyanskiy, *Scientific Data* **11**,
+94 (2024), [doi:10.1038/s41597-023-02898-2](https://doi.org/10.1038/s41597-023-02898-2).
