@@ -1,80 +1,77 @@
+"""Plane-wave multilayer transmission sweep (not OLED dipole outcoupling)."""
+from pathlib import Path
+import argparse
 import numpy as np
-import matplotlib
-matplotlib.use('Agg')  # Use Agg backend for headless environments
-import matplotlib.pyplot as plt
+from tmm import coh_tmm
 
-# Dispersion relationships for materials
-def n_alq3(wavelength):
-    A = 1.65
-    B = 0.5  # Adjust as necessary
-    return A + B / (wavelength ** 2)
 
-def n_silver(wavelength):
-    n_0 = 0.16  # Real part
-    kappa = 3.16  # Imaginary part
-    C = 1.5  # Coefficient for the dispersion
-    return n_0 - (C / (wavelength ** 2)) + 1j * kappa
+def n_alq3(wavelength_nm):
+    """Illustrative dispersion only; not calibrated material data."""
+    return 1.65 + 0.5 / wavelength_nm**2
 
-# Wavelength and angle ranges
-wavelengths = np.linspace(400, 700, 1000)  # Wavelength range (in nm)
-theta_list_deg = np.linspace(0, 90, 180)  # Angles from 0 to 90 degrees
-theta_list_rad = np.radians(theta_list_deg)  # Convert to radians
 
-# Set thickness range for the organic layer (e.g., Alq3) in nanometers
-thicknesses = np.linspace(25, 150, 10)  # Example thickness values, from 50nm to 200nm
+def n_silver(wavelength_nm):
+    """Illustrative complex refractive index; replace with measured data."""
+    return 0.16 - 1.5 / wavelength_nm**2 + 3.16j
 
-# Loop over different thickness values of the organic layer
-for thickness in thicknesses:
-    # Initialize the outcoupling efficiency array for this thickness
-    outcoupling_efficiency_2D = np.zeros((len(wavelengths), len(theta_list_deg)))
 
-    # Create the n_list for the current wavelength range and thickness
-    n_air = 1.0  # Refractive index of air
-    n_list = [n_air]  # Start with air
-    for wavelength in wavelengths:
-        n_list.append(n_alq3(wavelength))  # Alq3 layer refractive index
-    n_list.append(n_silver(wavelengths[-1]))  # Silver refractive index at last wavelength
+def stack_at(wavelength_nm, organic_nm, silver_nm=50.0):
+    if wavelength_nm <= 0 or organic_nm < 0 or silver_nm < 0:
+        raise ValueError("Wavelength must be positive and thicknesses nonnegative")
+    return ([1.0, n_alq3(wavelength_nm), n_silver(wavelength_nm), 1.0],
+            [np.inf, organic_nm, silver_nm, np.inf])
 
-    # Set the layer thickness values
-    d_alq3 = thickness * 1e-9  # Convert nm to meters
-    d_silver = 50e-9  # 50 nm for Silver
-    d_list = [np.inf, d_alq3, d_silver, np.inf]  # Air, Alq3, Silver, and back air
 
-    # Loop over each wavelength and angle to compute the outcoupling efficiency
-    for i, wavelength in enumerate(wavelengths):
-        R_TE, T_TE, R_TM, T_TM = [], [], [], []
-        
-        for theta in theta_list_rad:
-            # Ensure angle is valid for first layer (Alq3)
-            if theta < np.arcsin(n_air / np.abs(n_list[1])):
-                # TE polarization (s-polarized light)
-                coh_TE = coh_tmm('s', n_list, d_list, wavelength * 1e-9, theta)
-                R_TE.append(coh_TE['R'])
-                T_TE.append(coh_TE['T'])
+def transmission(wavelength_nm, angle_deg, organic_nm, polarization):
+    if not 0 <= angle_deg < 90:
+        raise ValueError("Angle must be in [0, 90) degrees")
+    if polarization not in ("s", "p"):
+        raise ValueError("Polarization must be s or p")
+    indices, thicknesses = stack_at(wavelength_nm, organic_nm)
+    result = coh_tmm(polarization, indices, thicknesses,
+                     np.deg2rad(angle_deg), wavelength_nm)
+    return float(result["T"])
 
-                # TM polarization (p-polarized light)
-                coh_TM = coh_tmm('p', n_list, d_list, wavelength * 1e-9, theta)
-                R_TM.append(coh_TM['R'])
-                T_TM.append(coh_TM['T'])
-            else:
-                R_TE.append(1.0)  # Total reflection
-                T_TE.append(0.0)  # No transmission
-                R_TM.append(1.0)  # Total reflection
-                T_TM.append(0.0)  # No transmission
 
-        # Combine TE and TM transmission efficiencies to compute the outcoupling efficiency
-        outcoupling_efficiency = np.array(T_TE) + np.array(T_TM)
-        outcoupling_efficiency_2D[i, :] = outcoupling_efficiency
+def sweep(wavelengths_nm, angles_deg, organic_nm):
+    wavelengths_nm = np.asarray(wavelengths_nm, dtype=float)
+    angles_deg = np.asarray(angles_deg, dtype=float)
+    if wavelengths_nm.ndim != 1 or angles_deg.ndim != 1:
+        raise ValueError("Sweep coordinates must be 1-D")
+    if not np.all(np.isfinite(wavelengths_nm)) or not np.all(np.isfinite(angles_deg)):
+        raise ValueError("Sweep coordinates must be finite")
+    values = np.empty((len(wavelengths_nm), len(angles_deg)))
+    for i, wavelength in enumerate(wavelengths_nm):
+        for j, angle in enumerate(angles_deg):
+            values[i, j] = 0.5 * (
+                transmission(wavelength, angle, organic_nm, "s")
+                + transmission(wavelength, angle, organic_nm, "p"))
+    return values
 
-    # Plotting the outcoupling efficiency for this thickness as a heatmap
-    plt.figure(figsize=(10, 6))
-    plt.contourf(theta_list_deg, wavelengths, outcoupling_efficiency_2D, levels=50, cmap='viridis')
-    plt.colorbar(label='Outcoupling Efficiency')
-    plt.xlabel('Angle of Incidence (degrees)')
-    plt.ylabel('Wavelength (nm)')
-    plt.title(f'Outcoupling Efficiency (Alq3 Thickness = {thickness:.1f} nm)')
 
-    # Save the plot as an image file
-    plt.savefig(f'outcoupling_efficiency_thickness_{thickness:.1f}nm.png')
-    plt.close()  # Close the figure to free up memory
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--wavelength-count", type=int, default=31)
+    parser.add_argument("--angle-count", type=int, default=19)
+    parser.add_argument("--thickness-nm", type=float, default=75.0)
+    parser.add_argument("--output", type=Path, default=Path("transmission.png"))
+    args = parser.parse_args()
+    if args.wavelength_count < 2 or args.angle_count < 2:
+        parser.error("sample counts must be >= 2")
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    wavelengths = np.linspace(400.0, 700.0, args.wavelength_count)
+    angles = np.linspace(0.0, 89.0, args.angle_count)
+    values = sweep(wavelengths, angles, args.thickness_nm)
+    fig, ax = plt.subplots()
+    plot = ax.contourf(angles, wavelengths, values, levels=30)
+    fig.colorbar(plot, ax=ax, label="Unpolarized plane-wave transmittance")
+    ax.set(xlabel="Incidence angle (degrees)", ylabel="Vacuum wavelength (nm)",
+           title=f"Illustrative stack: organic {args.thickness_nm:g} nm")
+    fig.savefig(args.output, dpi=150)
+    plt.close(fig)
 
+
+if __name__ == "__main__":
+    main()
