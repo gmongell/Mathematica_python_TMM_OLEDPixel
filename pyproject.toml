@@ -15,6 +15,7 @@ dependencies = [
     "numpy>=1.24,<3",
     "matplotlib>=3.7,<4",
     "tmm>=0.2.0,<0.3",
+    "scipy>=1.11,<2",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -32,7 +33,7 @@ mongelli-plane-wave = "tmm_OLED9:main"
 Repository = "https://github.com/gmongell/Mathematica_python_TMM_OLEDPixel"
 
 [tool.setuptools]
-py-modules = ["tmm_OLED9"]
+py-modules = ["tmm_OLED9", "dipole_reference"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

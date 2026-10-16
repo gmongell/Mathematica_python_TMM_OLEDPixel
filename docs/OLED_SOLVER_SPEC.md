@@ -5,6 +5,12 @@ The plane-wave preview remains separate and must not be relabeled as this solver
 Seller verification is a commercial gate, not a technical prerequisite to
 research implementation. A future solver must pass its own scientific gates.
 
+**First reference milestone implemented:** `dipole_reference.py` contains
+homogeneous angular/power kernels and single-interface total source-work
+integration, with [documented equations and benchmark scope](DIPOLE_FORMULATION.md).
+This partially addresses O1/O2/O4/O6/O8/O9 only for the stated reference geometry;
+it does not satisfy the complete finite-multilayer acceptance table below.
+
 ## Intended first problem
 
 An electric dipole in a finite, homogeneous, lossless, isotropic emitting layer

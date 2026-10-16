@@ -59,6 +59,7 @@ jobs:
           "$RUNNER_TEMP/buyer/bin/python" -m pip install dist/*.whl
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/buyer/bin/mongelli-plane-wave" --wavelength-count 3 --angle-count 3 --output preview.png
+          "$RUNNER_TEMP/buyer/bin/python" -c "from dipole_reference import SingleInterface; r=SingleInterface(550, 20, 1.0).decay_rates(); assert r.vertical == r.parallel == 1.0"
           test -s preview.png && test -s preview.csv && test -s preview.json
       - name: Audit installed runtime dependencies and produce CycloneDX inventory
         run: |

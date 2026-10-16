@@ -125,6 +125,49 @@ license presentation, final screenshots, seller verification and publication.
 
 ## Functions and engineering applications
 
+### Research dipole reference API
+
+`dipole_reference` provides a separate homogeneous and single-interface
+benchmark milestone. It does **not** replace the preview CLI or implement
+a finite-stack OLED solver. See [equations, conventions and reference limits](docs/DIPOLE_FORMULATION.md)
+and [the larger solver specification](docs/OLED_SOLVER_SPEC.md).
+
+```python
+from dipole_reference import SingleInterface, homogeneous_pattern
+
+pattern = homogeneous_pattern([0.0, 1.5707963267948966], 0.0, "vertical")
+print(pattern.s, pattern.p)  # dP / (P_host dOmega), radians, per steradian
+
+# Synthetic permittivity, not a measured silver data set.
+interface = SingleInterface(
+    wavelength_nm=550.0, distance_nm=20.0,
+    substrate_epsilon=-5.0 + 0.5j, host_index=1.0,
+)
+result = interface.decay_rates(atol=1e-8, rtol=1e-7)
+print(result.vertical, result.parallel, result.isotropic)
+print(result.estimated_error, result.refinement_delta)
+```
+
+`homogeneous_power` returns macroscopic SI watts for a peak harmonic dipole
+amplitude in C m; local-field corrections are not included.
+`SingleInterface` requires a lossless real positive host index and positive
+dipole distance. Permittivity is relative, with nonnegative imaginary part
+under `exp(-i omega t)`; `"pec"` selects the ideal perfect-mirror benchmark.
+Lossless nonpositive-permittivity substrates, absorbing hosts, and dimensionless
+separations `2*k_host*d < 1e-6` are unsupported and rejected.
+
+The result is total electromagnetic source work relative to homogeneous-host
+power, **not** external efficiency, radiated-only power, or a channel
+decomposition. Its propagating/evanescent corrections are integration regions;
+in particular host-evanescent fields can transmit into a lossless high-index
+substrate. Integration failures raise `DipoleConvergenceError` instead of
+returning clipped or success-shaped values. Diagnostic errors are numerical
+estimates, not guaranteed bounds or experimental validation.
+
+The module uses SciPy and is included in the wheel alongside the unchanged
+preview API. Tests are in `tests/test_dipole_reference.py`; no measured optical
+constants or production OLED claims are supplied.
+
 | Source / interface | Observed function | Inferred application |
 |---|---|---|
 | `python_tmm_oled_Green'sfcnApproach.py`: `OLEDOutcouplingTMM` | Layer definitions, aluminum Drude model, interface/propagation matrices, angle/wavelength calculations | Exploring material and thickness sensitivity in OLED stacks [1] |
