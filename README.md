@@ -68,6 +68,12 @@ No automatic tag push or public release is performed.
 
 ### GitHub + Gumroad commercial approval gates
 
+Owner-review drafts are available in [commercial policies and storefront copy](docs/COMMERCIAL_DRAFTS.md),
+[Gumroad seller verification guidance](docs/GUMROAD_SELLER_CHECKLIST.md), and
+[the proposed OLED dipole-solver specification](docs/OLED_SOLVER_SPEC.md).
+These documents are not active policies, completed verification, or implemented
+solver functionality.
+
 The five enrollment packets are supporting checklists, not enrollment approvals.
 Use GitHub for technical documentation, demonstrations and versioned artifacts;
 Gumroad is the proposed separate checkout and buyer-delivery channel.
