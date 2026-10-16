@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mongelli-plane-wave-preview"
+version = "0.1.0a1"
+description = "Illustrative multilayer plane-wave optics preview, not an OLED emission solver"
+readme = "README.md"
+requires-python = ">=3.11,<3.15"
+license = "Apache-2.0"
+license-files = ["LICENSE", "LICENSE-CC-BY-4.0.txt", "NOTICE"]
+authors = [{name = "Guy Francis Mongelli"}]
+dependencies = [
+    "numpy>=1.24,<3",
+    "matplotlib>=3.7,<4",
+    "tmm>=0.2.0,<0.3",
+    "scipy>=1.11,<2",
+    "PyYAML>=6.0.2,<7",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "build>=1.2,<2", "twine>=6,<7", "pip-audit>=2.9,<3"]
+
+[project.scripts]
+mongelli-plane-wave = "tmm_OLED9:main"
+mongelli-resource-study = "simulation_resources:main"
+
+[project.urls]
+Repository = "https://github.com/gmongell/Mathematica_python_TMM_OLEDPixel"
+
+[tool.setuptools]
+py-modules = ["tmm_OLED9", "dipole_reference", "spectral_eqe", "simulation_resources"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -1,0 +1,18 @@
+Mongelli plane-wave preview
+Copyright (c) 2025 Guy Francis Mongelli
+
+Project code is Apache-2.0 under the existing repository notice.
+Documentation, prose and figures are CC BY 4.0 under the existing
+repository notice. No license change or exclusive rights are asserted.
+
+This preview uses NumPy, Matplotlib and tmm as separately installed
+dependencies. Preserve their respective notices when redistributing them.
+The preview wheel does not bundle those dependencies.
+
+Method reference:
+S. J. Byrnes, "Multilayer optical calculations", arXiv:1603.02720.
+https://doi.org/10.48550/arXiv.1603.02720
+
+Material index formulas are inherited illustrative placeholders with no
+measurement provenance. This software is not a validated OLED dipole
+emission/outcoupling solver or a certified device-design tool.

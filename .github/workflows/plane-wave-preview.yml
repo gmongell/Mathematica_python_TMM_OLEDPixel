@@ -1,0 +1,126 @@
+name: Plane-wave preview
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      draft_tag:
+        description: "Optional existing tag, e.g. v0.1.0a1, for a draft prerelease only"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ['3.11', '3.12', '3.13', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install ".[dev]"
+      - run: python -m pytest -q --junitxml=test-results.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results-${{ matrix.os }}-${{ matrix.python }}
+          path: test-results.xml
+          if-no-files-found: error
+
+  package:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install ".[dev]"
+      - run: python -m build
+      - run: python -m twine check dist/*
+      - name: Test installed wheel outside source tree
+        shell: bash
+        run: |
+          python -m venv "$RUNNER_TEMP/buyer"
+          "$RUNNER_TEMP/buyer/bin/python" -m pip install --upgrade pip
+          "$RUNNER_TEMP/buyer/bin/python" -m pip install dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/buyer/bin/mongelli-plane-wave" --wavelength-count 3 --angle-count 3 --output preview.png
+          "$RUNNER_TEMP/buyer/bin/python" -c "from dipole_reference import SingleInterface; r=SingleInterface(550, 20, 1.0).decay_rates(); assert r.vertical == r.parallel == 1.0"
+          "$RUNNER_TEMP/buyer/bin/python" -c "from spectral_eqe import OpticalRateBudget; from simulation_resources import pixel_study; b=OpticalRateBudget([550], [1], [.5], 'homogeneous'); assert b.monochromatic_eqe(intrinsic_yield=1, charge_balance=1, exciton_yield=1)[0] == .5; assert len(pixel_study()['cases']) == 4"
+          test -s preview.png && test -s preview.csv && test -s preview.json
+      - name: Audit installed runtime dependencies and produce CycloneDX inventory
+        run: |
+          SITE=$("$RUNNER_TEMP/buyer/bin/python" -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")
+          python -m pip_audit --path "$SITE" --format cyclonedx-json --output dist/dependency-audit.cdx.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: runtime-dependency-audit
+          path: dist/dependency-audit.cdx.json
+          if-no-files-found: warn
+      - name: Record artifact checksums
+        run: sha256sum dist/*.whl dist/*.tar.gz dist/*.json > dist/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plane-wave-preview-distributions
+          path: dist/*
+          if-no-files-found: error
+
+  draft:
+    if: github.event_name == 'workflow_dispatch' && inputs.draft_tag != ''
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate version and existing tag targets the tested commit
+        env:
+          DRAFT_TAG: ${{ inputs.draft_tag }}
+        run: |
+          python - <<'PY'
+          import os
+          import subprocess
+          import tomllib
+          from pathlib import Path
+          version = tomllib.loads(Path("pyproject.toml").read_text())["project"]["version"]
+          tag = os.environ["DRAFT_TAG"]
+          if tag != "v" + version:
+              raise SystemExit("Tag must match package version")
+          target = subprocess.check_output(["git", "rev-parse", "--verify", f"refs/tags/{tag}^{{commit}}"], text=True).strip()
+          head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+          if target != head:
+              raise SystemExit("Tag must target the tested workflow commit")
+          PY
+      - uses: actions/download-artifact@v4
+        with:
+          name: plane-wave-preview-distributions
+          path: dist
+      - name: Create draft only
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRAFT_TAG: ${{ inputs.draft_tag }}
+        run: |
+          gh release create "$DRAFT_TAG" dist/* --verify-tag --draft --prerelease \
+            --title "Plane-wave optics preview $DRAFT_TAG" \
+            --notes "Illustrative plane-wave transmittance only. Not a validated OLED dipole-outcoupling solver. Not approved for paid publication; see README commercial approval gates."
