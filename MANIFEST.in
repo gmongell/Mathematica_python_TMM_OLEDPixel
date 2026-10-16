@@ -1,3 +1,4 @@
 include docs/DIPOLE_FORMULATION.md
 include docs/SPECTRAL_EQE_AND_DATA.md
 include docs/ENSEMBLE_RESOURCE_ESTIMATES.md
+include docs/MATHEMATICAL_DERIVATIONS.md

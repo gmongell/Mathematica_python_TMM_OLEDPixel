@@ -1,5 +1,8 @@
 # Dispersive stacks, native optical data and spectral EQE
 
+See the [consolidated mathematical record](MATHEMATICAL_DERIVATIONS.md)
+for rendered LaTeX equations and their dipole/ensemble/resource rationale.
+
 Research milestone, 2026-10-16. Implemented foundations are in `spectral_eqe.py`.
 **There is not yet a finite emitting-layer multilayer source solver.**
 The data catalog, stack evaluator, plane-wave checks and EQE rate composition

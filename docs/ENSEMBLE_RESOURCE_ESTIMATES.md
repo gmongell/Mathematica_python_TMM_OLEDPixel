@@ -1,5 +1,8 @@
 # Orientation ensembles and CPU/GPU/RAM planning
 
+See the [consolidated mathematical record](MATHEMATICAL_DERIVATIONS.md)
+for rendered LaTeX equations, assumptions and connected optical/EQE derivations.
+
 Prepared 2026-10-16. APIs: `spectral_eqe.py` and `simulation_resources.py`.
 Estimates are explicit workload models, NOT a GPU implementation, hardware
 performance guarantee, measured peak memory, or full-pixel field simulation.

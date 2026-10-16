@@ -1,5 +1,8 @@
 # Dipole reference kernels: conventions and derivation
 
+For rendered LaTeX equations and the connected EQE/ensemble/resource derivations,
+see the [consolidated mathematical record](MATHEMATICAL_DERIVATIONS.md).
+
 Research milestone, 2026-10-16. Implemented in `dipole_reference.py`.
 These are homogeneous and **one-interface** reference kernels, not a finite
 emitting-layer/multilayer OLED solver, material database, or sale-ready product.

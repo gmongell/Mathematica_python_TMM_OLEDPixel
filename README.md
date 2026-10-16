@@ -127,6 +127,10 @@ license presentation, final screenshots, seller verification and publication.
 
 ### Dispersive data, spectral EQE and ensemble planning
 
+The [consolidated mathematical derivations](docs/MATHEMATICAL_DERIVATIONS.md)
+render full LaTeX equations on GitHub, with assumptions, step-by-step rationales,
+benchmark limits, resource models and implementation-status boundaries.
+
 See [native optical data and spectral EQE derivation](docs/SPECTRAL_EQE_AND_DATA.md)
 and [orientation/resource planning](docs/ENSEMBLE_RESOURCE_ESTIMATES.md).
 The new APIs provide pinned native refractiveindex.info ingestion, local
