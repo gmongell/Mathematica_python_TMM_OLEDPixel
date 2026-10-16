@@ -125,6 +125,21 @@ license presentation, final screenshots, seller verification and publication.
 
 ## Functions and engineering applications
 
+### Dispersive data, spectral EQE and ensemble planning
+
+See [native optical data and spectral EQE derivation](docs/SPECTRAL_EQE_AND_DATA.md)
+and [orientation/resource planning](docs/ENSEMBLE_RESOURCE_ESTIMATES.md).
+The new APIs provide pinned native refractiveindex.info ingestion, local
+measurement CSV ingestion, checksum-checked offline catalog records,
+non-extrapolating n+ik evaluation, wavelength-resolved layer stacks, explicit
+EQE rate composition, incoherent orientation comparisons, and CPU/GPU/RAM
+workload estimates. No cloud account is required or provisioned.
+
+**Scope boundary:** stack-dependent plane-wave R/T/A is wired; finite-layer
+dipole emission/collected-flux physics is not yet implemented. EQE composition
+requires externally derived physical source-work/escape-rate budgets, not
+plane-wave T. The resource estimator is not an implemented GPU/FDTD solver.
+
 ### Research dipole reference API
 
 `dipole_reference` provides a separate homogeneous and single-interface

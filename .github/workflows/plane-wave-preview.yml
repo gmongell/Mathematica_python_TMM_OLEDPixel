@@ -60,6 +60,7 @@ jobs:
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/buyer/bin/mongelli-plane-wave" --wavelength-count 3 --angle-count 3 --output preview.png
           "$RUNNER_TEMP/buyer/bin/python" -c "from dipole_reference import SingleInterface; r=SingleInterface(550, 20, 1.0).decay_rates(); assert r.vertical == r.parallel == 1.0"
+          "$RUNNER_TEMP/buyer/bin/python" -c "from spectral_eqe import OpticalRateBudget; from simulation_resources import pixel_study; b=OpticalRateBudget([550], [1], [.5], 'homogeneous'); assert b.monochromatic_eqe(intrinsic_yield=1, charge_balance=1, exciton_yield=1)[0] == .5; assert len(pixel_study()['cases']) == 4"
           test -s preview.png && test -s preview.csv && test -s preview.json
       - name: Audit installed runtime dependencies and produce CycloneDX inventory
         run: |
