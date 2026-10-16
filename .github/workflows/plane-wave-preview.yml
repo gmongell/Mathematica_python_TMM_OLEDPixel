@@ -55,6 +55,7 @@ jobs:
         shell: bash
         run: |
           python -m venv "$RUNNER_TEMP/buyer"
+          "$RUNNER_TEMP/buyer/bin/python" -m pip install --upgrade pip
           "$RUNNER_TEMP/buyer/bin/python" -m pip install dist/*.whl
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/buyer/bin/mongelli-plane-wave" --wavelength-count 3 --angle-count 3 --output preview.png
@@ -63,6 +64,12 @@ jobs:
         run: |
           SITE=$("$RUNNER_TEMP/buyer/bin/python" -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")
           python -m pip_audit --path "$SITE" --format cyclonedx-json --output dist/dependency-audit.cdx.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: runtime-dependency-audit
+          path: dist/dependency-audit.cdx.json
+          if-no-files-found: warn
       - name: Record artifact checksums
         run: sha256sum dist/*.whl dist/*.tar.gz dist/*.json > dist/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
