@@ -1,80 +1,174 @@
+"""Illustrative plane-wave multilayer optics; NOT OLED dipole outcoupling."""
+
+import argparse
+import csv
+import json
+import sys
+from pathlib import Path
+from typing import Sequence
+
 import numpy as np
-import matplotlib
-matplotlib.use('Agg')  # Use Agg backend for headless environments
-import matplotlib.pyplot as plt
+from numpy.typing import ArrayLike, NDArray
+from tmm import coh_tmm
 
-# Dispersion relationships for materials
-def n_alq3(wavelength):
-    A = 1.65
-    B = 0.5  # Adjust as necessary
-    return A + B / (wavelength ** 2)
+__version__ = "0.1.0a1"
 
-def n_silver(wavelength):
-    n_0 = 0.16  # Real part
-    kappa = 3.16  # Imaginary part
-    C = 1.5  # Coefficient for the dispersion
-    return n_0 - (C / (wavelength ** 2)) + 1j * kappa
 
-# Wavelength and angle ranges
-wavelengths = np.linspace(400, 700, 1000)  # Wavelength range (in nm)
-theta_list_deg = np.linspace(0, 90, 180)  # Angles from 0 to 90 degrees
-theta_list_rad = np.radians(theta_list_deg)  # Convert to radians
+def _positive_wavelength(wavelength_nm: float) -> None:
+    if not np.isfinite(wavelength_nm) or wavelength_nm <= 0:
+        raise ValueError("Wavelength must be finite and positive (nm)")
 
-# Set thickness range for the organic layer (e.g., Alq3) in nanometers
-thicknesses = np.linspace(25, 150, 10)  # Example thickness values, from 50nm to 200nm
 
-# Loop over different thickness values of the organic layer
-for thickness in thicknesses:
-    # Initialize the outcoupling efficiency array for this thickness
-    outcoupling_efficiency_2D = np.zeros((len(wavelengths), len(theta_list_deg)))
+def _nonnegative_thickness(thickness_nm: float) -> None:
+    if not np.isfinite(thickness_nm) or thickness_nm < 0:
+        raise ValueError("Thickness must be finite and nonnegative (nm)")
 
-    # Create the n_list for the current wavelength range and thickness
-    n_air = 1.0  # Refractive index of air
-    n_list = [n_air]  # Start with air
-    for wavelength in wavelengths:
-        n_list.append(n_alq3(wavelength))  # Alq3 layer refractive index
-    n_list.append(n_silver(wavelengths[-1]))  # Silver refractive index at last wavelength
 
-    # Set the layer thickness values
-    d_alq3 = thickness * 1e-9  # Convert nm to meters
-    d_silver = 50e-9  # 50 nm for Silver
-    d_list = [np.inf, d_alq3, d_silver, np.inf]  # Air, Alq3, Silver, and back air
+def n_alq3(wavelength_nm: float) -> float:
+    """Illustrative dispersion only, not measured or calibrated Alq3 data."""
+    _positive_wavelength(wavelength_nm)
+    return 1.65 + 0.5 / wavelength_nm**2
 
-    # Loop over each wavelength and angle to compute the outcoupling efficiency
+
+def n_silver(wavelength_nm: float) -> complex:
+    """Illustrative passive index, not measured or calibrated silver data."""
+    _positive_wavelength(wavelength_nm)
+    return 0.16 - 1.5 / wavelength_nm**2 + 3.16j
+
+
+def stack_at(
+    wavelength_nm: float, organic_nm: float, silver_nm: float = 50.0
+) -> tuple[list[complex], list[float]]:
+    _positive_wavelength(wavelength_nm)
+    _nonnegative_thickness(organic_nm)
+    _nonnegative_thickness(silver_nm)
+    return (
+        [1.0, n_alq3(wavelength_nm), n_silver(wavelength_nm), 1.0],
+        [np.inf, organic_nm, silver_nm, np.inf],
+    )
+
+
+def power_coefficients(
+    wavelength_nm: float,
+    angle_deg: float,
+    organic_nm: float,
+    polarization: str,
+    silver_nm: float = 50.0,
+) -> dict[str, float]:
+    """Return R, T and total A for air/organic/silver/air plane-wave incidence.
+
+    A = 1 - R - T applies here because both external media are lossless air.
+    All lengths are nm; angle is in degrees. No emitting dipoles are modeled.
+    """
+    if not np.isfinite(angle_deg) or not 0 <= angle_deg < 90:
+        raise ValueError("Angle must be finite and in [0, 90) degrees")
+    if polarization not in ("s", "p"):
+        raise ValueError("Polarization must be s or p")
+    indices, thicknesses = stack_at(wavelength_nm, organic_nm, silver_nm)
+    result = coh_tmm(
+        polarization, indices, thicknesses, np.deg2rad(angle_deg), wavelength_nm
+    )
+    reflection, transmittance = float(result["R"]), float(result["T"])
+    absorption = 1.0 - reflection - transmittance
+    values = np.array([reflection, transmittance, absorption])
+    if not np.all(np.isfinite(values)) or np.any(values < -1e-9) or np.any(values > 1 + 1e-9):
+        raise ArithmeticError("Solver returned nonphysical passive-stack power coefficients")
+    return {"R": reflection, "T": transmittance, "A": absorption}
+
+
+def transmission(
+    wavelength_nm: float, angle_deg: float, organic_nm: float, polarization: str
+) -> float:
+    return power_coefficients(wavelength_nm, angle_deg, organic_nm, polarization)["T"]
+
+
+def sweep(
+    wavelengths_nm: ArrayLike, angles_deg: ArrayLike, organic_nm: float
+) -> NDArray[np.float64]:
+    """Return equally weighted s/p transmittance, indexed [wavelength, angle]."""
+    wavelengths = np.asarray(wavelengths_nm, dtype=float)
+    angles = np.asarray(angles_deg, dtype=float)
+    _nonnegative_thickness(organic_nm)
+    if wavelengths.ndim != 1 or angles.ndim != 1 or not wavelengths.size or not angles.size:
+        raise ValueError("Sweep coordinates must be nonempty 1-D arrays")
+    if not np.all(np.isfinite(wavelengths)) or np.any(wavelengths <= 0):
+        raise ValueError("Wavelengths must be finite and positive (nm)")
+    if not np.all(np.isfinite(angles)) or np.any(angles < 0) or np.any(angles >= 90):
+        raise ValueError("Angles must be finite and in [0, 90) degrees")
+    values = np.empty((len(wavelengths), len(angles)))
     for i, wavelength in enumerate(wavelengths):
-        R_TE, T_TE, R_TM, T_TM = [], [], [], []
-        
-        for theta in theta_list_rad:
-            # Ensure angle is valid for first layer (Alq3)
-            if theta < np.arcsin(n_air / np.abs(n_list[1])):
-                # TE polarization (s-polarized light)
-                coh_TE = coh_tmm('s', n_list, d_list, wavelength * 1e-9, theta)
-                R_TE.append(coh_TE['R'])
-                T_TE.append(coh_TE['T'])
+        for j, angle in enumerate(angles):
+            values[i, j] = 0.5 * (
+                transmission(wavelength, angle, organic_nm, "s")
+                + transmission(wavelength, angle, organic_nm, "p")
+            )
+    return values
 
-                # TM polarization (p-polarized light)
-                coh_TM = coh_tmm('p', n_list, d_list, wavelength * 1e-9, theta)
-                R_TM.append(coh_TM['R'])
-                T_TM.append(coh_TM['T'])
-            else:
-                R_TE.append(1.0)  # Total reflection
-                T_TE.append(0.0)  # No transmission
-                R_TM.append(1.0)  # Total reflection
-                T_TM.append(0.0)  # No transmission
 
-        # Combine TE and TM transmission efficiencies to compute the outcoupling efficiency
-        outcoupling_efficiency = np.array(T_TE) + np.array(T_TM)
-        outcoupling_efficiency_2D[i, :] = outcoupling_efficiency
+def main(argv: Sequence[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--version", action="version", version=__version__)
+    parser.add_argument("--wavelength-count", type=int, default=31)
+    parser.add_argument("--angle-count", type=int, default=19)
+    parser.add_argument("--thickness-nm", type=float, default=75.0)
+    parser.add_argument("--output", type=Path, default=Path("transmission.png"))
+    parser.add_argument("--overwrite", action="store_true", help="Replace existing output files")
+    args = parser.parse_args(argv)
+    if args.wavelength_count < 2 or args.angle_count < 2:
+        parser.error("sample counts must be >= 2")
+    if args.output.suffix.lower() != ".png":
+        parser.error("--output must have a .png extension")
+    paths = [args.output, args.output.with_suffix(".csv"), args.output.with_suffix(".json")]
+    if not args.overwrite and any(path.exists() for path in paths):
+        parser.error("output already exists; choose another path or use --overwrite")
+    try:
+        _nonnegative_thickness(args.thickness_nm)
+        if not args.output.parent.is_dir():
+            raise ValueError("Output parent directory must already exist")
+        wavelengths = np.linspace(400.0, 700.0, args.wavelength_count)
+        angles = np.linspace(0.0, 89.0, args.angle_count)
+        values = sweep(wavelengths, angles, args.thickness_nm)
+        import matplotlib
 
-    # Plotting the outcoupling efficiency for this thickness as a heatmap
-    plt.figure(figsize=(10, 6))
-    plt.contourf(theta_list_deg, wavelengths, outcoupling_efficiency_2D, levels=50, cmap='viridis')
-    plt.colorbar(label='Outcoupling Efficiency')
-    plt.xlabel('Angle of Incidence (degrees)')
-    plt.ylabel('Wavelength (nm)')
-    plt.title(f'Outcoupling Efficiency (Alq3 Thickness = {thickness:.1f} nm)')
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
 
-    # Save the plot as an image file
-    plt.savefig(f'outcoupling_efficiency_thickness_{thickness:.1f}nm.png')
-    plt.close()  # Close the figure to free up memory
+        fig, ax = plt.subplots()
+        try:
+            plot = ax.contourf(angles, wavelengths, values, levels=30)
+            fig.colorbar(plot, ax=ax, label="Unpolarized plane-wave transmittance")
+            ax.set(
+                xlabel="Incidence angle (degrees)",
+                ylabel="Vacuum wavelength (nm)",
+                title=f"Illustrative stack: organic {args.thickness_nm:g} nm",
+            )
+            fig.savefig(paths[0], dpi=150)
+        finally:
+            plt.close(fig)
+        with paths[1].open("w", newline="", encoding="utf-8") as output:
+            writer = csv.writer(output)
+            writer.writerow(["wavelength_nm", "angle_deg", "unpolarized_transmittance"])
+            for i, wavelength in enumerate(wavelengths):
+                for j, angle in enumerate(angles):
+                    writer.writerow([wavelength, angle, values[i, j]])
+        metadata = {
+            "schema_version": 1,
+            "software_version": __version__,
+            "quantity": "unpolarized_plane_wave_transmittance",
+            "polarization_weighting": "0.5 * (T_s + T_p)",
+            "stack": ["air", "illustrative organic", "illustrative silver", "air"],
+            "organic_thickness_nm": args.thickness_nm,
+            "silver_thickness_nm": 50.0,
+            "wavelengths_nm": wavelengths.tolist(),
+            "angles_deg": angles.tolist(),
+            "limitations": "Illustrative indices; not calibrated materials or OLED dipole outcoupling.",
+        }
+        paths[2].write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+    except (ValueError, ArithmeticError, OSError) as error:
+        parser.exit(1, f"error: {error}; outputs may be incomplete\n")
+    print("WARNING: illustrative plane-wave preview; NOT a validated OLED solver.", file=sys.stderr)
+    print("Created: " + ", ".join(str(path) for path in paths))
 
+
+if __name__ == "__main__":
+    main()
