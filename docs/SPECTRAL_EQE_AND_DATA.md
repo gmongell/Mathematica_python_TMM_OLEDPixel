@@ -11,12 +11,16 @@ are working components, not a complete device-performance prediction.
 ## What wavelength-specific EQE means
 
 Let a stack be defined by thicknesses d_j and relative complex indices
-N_j(lambda)=n_j(lambda)+i k_j(lambda), under exp(-i omega t).
+$N_j(\lambda)=n_j(\lambda)+ik_j(\lambda)$, under $e^{-i\omega t}$.
 For a specified emitter position, dipole orientation and collection geometry,
-the eventual emitting-source solver must compute:
+the eventual emitting-source solver must compute, each as a function of $(\lambda;\{d_j,N_j\},z,\text{orientation})$:
 
-    F_total(lambda; {d_j,N_j}, z, orientation) = P_EM / P_host
-    F_escape(lambda; {d_j,N_j}, z, orientation) = P_collected / P_host
+$$
+\begin{aligned}
+F_{\operatorname{total}}&=P_{\operatorname{EM}}/P_{\operatorname{host}}\\
+F_{\operatorname{escape}}&=P_{\operatorname{collected}}/P_{\operatorname{host}}
+\end{aligned}
+$$
 
 P_EM is source work into all electromagnetic channels, including loss;
 P_collected is emitted flux into a specified external collection region.
@@ -29,9 +33,9 @@ the charge-balance factor and eta_exciton the fraction of injected pairs
 forming the modeled emissive state. For an independently evaluated
 monochromatic transition, with the intrinsic nonradiative rate held fixed:
 
-    EQE_mono(lambda) =
-        eta_charge * eta_exciton * q0 * F_escape(lambda)
-        / [1 - q0 + q0 * F_total(lambda)]
+$$
+\operatorname{EQE}_{\operatorname{mono}}(\lambda)=\frac{\eta_{\operatorname{charge}}\,\eta_{\operatorname{exciton}}\,q_0\,F_{\operatorname{escape}}(\lambda)}{1-q_0+q_0F_{\operatorname{total}}(\lambda)}
+$$
 
 This follows from Gamma_rad,host/(Gamma_rad,host+Gamma_nr)=q0,
 Gamma_EM=F_total*Gamma_rad,host and
@@ -48,9 +52,12 @@ No universal 25% spin factor, unit charge balance or unit q0 is silently assumed
 For one emitter population with intrinsic PHOTON spectral density S0(lambda)
 normalized to integral S0 d(lambda)=1:
 
-    D = 1 - q0 + q0 * integral S0(lambda) F_total(lambda) d(lambda)
-    d(EQE)/d(lambda) =
-        eta_charge * eta_exciton * q0 * S0(lambda) F_escape(lambda) / D
+$$
+\begin{aligned}
+D&=1-q_0+q_0\int S_0(\lambda)F_{\operatorname{total}}(\lambda)\,d\lambda\\
+\frac{d\operatorname{EQE}}{d\lambda}&=\frac{\eta_{\operatorname{charge}}\,\eta_{\operatorname{exciton}}\,q_0\,S_0(\lambda)F_{\operatorname{escape}}(\lambda)}{D}
+\end{aligned}
+$$
 
 Integrate the latter to get dimensionless broadband EQE. It is incorrect
 to apply an independent lifetime denominator to every spectral bin of this

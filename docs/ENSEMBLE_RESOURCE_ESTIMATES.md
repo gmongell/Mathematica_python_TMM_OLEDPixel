@@ -54,8 +54,12 @@ break that simplification. No finite-pixel EQE is claimed here.
 Let L be wavelength count, Z sampled depths, C thickness configurations,
 J finite layers, Q quadrature evaluations per orientation including refinements.
 
-    basis integrals = 2 * L * Z * C
-    layer-response evaluations = 2 * L * Z * C * Q * J
+$$
+\begin{aligned}
+N_{\operatorname{basis}}&=2LZC\\
+N_{\operatorname{layer}}&=2LZCQJ
+\end{aligned}
+$$
 
 The estimator reports an adjustable arithmetic count, a streamed workspace,
 retained rate-array storage, and optional N-dipole direction storage/averaging
@@ -136,10 +140,11 @@ factors. No multi-GPU capability is implied.
 `Hardware` optionally accepts USER-SUPPLIED sustained CPU/GPU GFLOP/s and GB/s.
 The estimator then reports only the idealized lower bound:
 
-    seconds >= max(assumed_FLOPs / sustained_FLOPs_per_second,
-                   assumed_memory_traffic / sustained_bytes_per_second)
+$$
+T\geq\max\left(\frac{\operatorname{FLOPs}_{\operatorname{assumed}}}{R_{\operatorname{FLOP}}},\frac{\operatorname{bytes}_{\operatorname{assumed}}}{R_{\operatorname{byte}}}\right)
+$$
 
-This roofline lower bound is not elapsed-time prediction. If a grid does not
+Here $R_{\operatorname{FLOP}}$ and $R_{\operatorname{byte}}$ are the user-supplied sustained rates. This roofline lower bound is not elapsed-time prediction. If a grid does not
 fit, the single-device bound does not mean the run is feasible. Without supplied
 rates, no CPU/GPU runtime is invented. The planning tool itself does not execute
 FDTD on either processor.

@@ -19,13 +19,17 @@ ideal-boundary sentinel `"pec"` for a perfect electric conductor.
 
 Homogeneous macroscopic radiated power, for peak (not RMS) dipole amplitude:
 
-    P_host = n1 * omega^4 * |p|^2 / (12 pi epsilon0 c^3)
+$$
+P_{\operatorname{host}}=\frac{n_1\omega^4|\mathbf p|^2}{12\pi\epsilon_0c^3}
+$$
 
 No microscopic local-field correction is included. The normalized angular
 density is dP/(P_host dOmega), with dOmega=sin(theta) dtheta dphi.
 For a unit dipole axis e and observation direction r_hat:
 
-    density = 3/(8 pi) * (1 - |e . r_hat|^2)
+$$
+\frac{1}{P_{\operatorname{host}}}\frac{dP}{d\Omega}=\frac{3}{8\pi}\left(1-|\hat{\mathbf e}\cdot\hat{\mathbf r}|^2\right)
+$$
 
 Project e onto e_phi (s) and e_theta (p) before squaring. In particular:
 
@@ -48,17 +52,19 @@ v=sqrt(epsilon2/epsilon1-q^2). Select the outgoing/decaying branch:
 positive real root for propagation, positive imaginary root for evanescence.
 The p coefficient here uses the standard electric-field Fresnel convention:
 
-    r_s = (w-v)/(w+v)
-    r_p = (epsilon2*w-epsilon1*v)/(epsilon2*w+epsilon1*v)
+$$
+r_s=\frac{w-v}{w+v},\qquad r_p=\frac{\epsilon_2w-\epsilon_1v}{\epsilon_2w+\epsilon_1v}
+$$
 
 For `"pec"`, r_s=-1 and r_p=+1. Identical media give both coefficients zero.
 The total electromagnetic source-work enhancement relative to P_host is:
 
-    F_vertical = 1 + (3/2) Re integral_0^infinity
-                 [q^3/w * r_p * exp(2 i k1 d w)] dq
-
-    F_parallel = 1 + (3/4) Re integral_0^infinity
-                 [q/w * (r_s - w^2 r_p) * exp(2 i k1 d w)] dq
+$$
+\begin{aligned}
+F_\perp&=1+\frac32\operatorname{Re}\int_0^\infty\frac{q^3}{w}\,r_p\,e^{2ik_1dw}\,dq\\
+F_\parallel&=1+\frac34\operatorname{Re}\int_0^\infty\frac{q}{w}\,(r_s-w^2r_p)\,e^{2ik_1dw}\,dq
+\end{aligned}
+$$
 
 The **minus** before w^2*r_p in the parallel expression is essential. It
 comes from the reflected p dyad, not from a polarization-intensity average.
@@ -76,17 +82,21 @@ lossless substrate; "evanescent correction" does not mean "absorbed power".
 
 Write a=2 k1 d. In the q<1 region substitute u=sqrt(1-q^2):
 
-    Delta_vertical_prop = (3/2) integral_0^1
-                          (1-u^2) Re[r_p exp(i a u)] du
-    Delta_parallel_prop = (3/4) integral_0^1
-                          Re[(r_s-u^2*r_p) exp(i a u)] du
+$$
+\begin{aligned}
+\Delta F_{\perp,\operatorname{prop}}&=\frac32\int_0^1(1-u^2)\operatorname{Re}\left[r_pe^{iau}\right]du\\
+\Delta F_{\parallel,\operatorname{prop}}&=\frac34\int_0^1\operatorname{Re}\left[(r_s-u^2r_p)e^{iau}\right]du
+\end{aligned}
+$$
 
 In q>1 substitute t=sqrt(q^2-1), then x=a*t:
 
-    Delta_vertical_evan = (3/2)/a integral_0^infinity
-                          (1+(x/a)^2) exp(-x) Im[r_p] dx
-    Delta_parallel_evan = (3/4)/a integral_0^infinity
-                          exp(-x) Im[r_s+(x/a)^2*r_p] dx
+$$
+\begin{aligned}
+\Delta F_{\perp,\operatorname{evan}}&=\frac{3}{2a}\int_0^\infty\left(1+\frac{x^2}{a^2}\right)e^{-x}\operatorname{Im}r_p\,dx\\
+\Delta F_{\parallel,\operatorname{evan}}&=\frac{3}{4a}\int_0^\infty e^{-x}\operatorname{Im}\left[r_s+\frac{x^2}{a^2}r_p\right]dx
+\end{aligned}
+$$
 
 This removes the integrable q=1 singularity and scales the decaying tail.
 For a lossless dielectric, split the substrate light line explicitly:
@@ -120,8 +130,12 @@ Use the transformed integrated API, not sampling at the light line.
 
 Method of images gives, with a=2 k1 d:
 
-    F_vertical = 1 + 3*(sin(a)-a*cos(a))/a^3
-    F_parallel = 1 - (3/2)*(sin(a)/a + cos(a)/a^2 - sin(a)/a^3)
+$$
+\begin{aligned}
+F_\perp&=1+\frac{3(\sin a-a\cos a)}{a^3}\\
+F_\parallel&=1-\frac32\left(\frac{\sin a}{a}+\frac{\cos a}{a^2}-\frac{\sin a}{a^3}\right)
+\end{aligned}
+$$
 
 At small a, the numerically stable limits are
 F_vertical=2-a^2/10+a^4/280+... and
@@ -131,8 +145,9 @@ results detect wrong signs, missing prefactors and phase/unit mistakes.
 
 For a lossy half-space, the quasistatic leading evanescent corrections are:
 
-    Delta_vertical ~ 3/a^3 * Im[(epsilon2-epsilon1)/(epsilon2+epsilon1)]
-    Delta_parallel ~ (3/2)/a^3 * Im[(epsilon2-epsilon1)/(epsilon2+epsilon1)]
+$$
+\Delta F_\perp\sim\frac{3}{a^3}\operatorname{Im}\frac{\epsilon_2-\epsilon_1}{\epsilon_2+\epsilon_1},\qquad \Delta F_\parallel\sim\frac{3}{2a^3}\operatorname{Im}\frac{\epsilon_2-\epsilon_1}{\epsilon_2+\epsilon_1}
+$$
 
 This is a mathematical asymptote, not a material/device-validity claim.
 

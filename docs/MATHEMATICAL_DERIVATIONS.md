@@ -32,17 +32,13 @@ Assume linear, isotropic, nonmagnetic media and harmonic peak amplitudes with
 time dependence
 
 $$
-\mathbf E(\mathbf r,t)=\operatorname{Re}
- \left[\mathbf E(\mathbf r)e^{-i\omega t}\right],
-\qquad
-k_0=\frac{2\pi}{\lambda_0}=\frac{\omega}{c}.
+\mathbf E(\mathbf r,t)=\operatorname{Re} \left[\mathbf E(\mathbf r)e^{-i\omega t}\right], \qquad k_0=\frac{2\pi}{\lambda_0}=\frac{\omega}{c}.
 $$
 
 The relative index and permittivity are
 
 $$
-N_j(\lambda_0)=n_j(\lambda_0)+i\kappa_j(\lambda_0),
-\qquad \epsilon_j=N_j^2.
+N_j(\lambda_0)=n_j(\lambda_0)+i\kappa_j(\lambda_0), \qquad \epsilon_j=N_j^2.
 $$
 
 The symbol $\kappa$ denotes extinction coefficient, not a wavevector.
@@ -57,8 +53,7 @@ formulas with $c$, $\epsilon_0$ and a dipole moment in C m.
 For a prescribed electric dipole $\mathbf p$, the homogeneous-host power is
 
 $$
-P_h=\frac{n_h\omega^4|\mathbf p|^2}{12\pi\epsilon_0c^3}.
-\tag{1}
+P_h=\frac{n_h\omega^4|\mathbf p|^2}{12\pi\epsilon_0c^3}. \tag{1}
 $$
 
 This is a macroscopic lossless-host normalization for a **peak** amplitude,
@@ -68,16 +63,10 @@ combining rates from different orientations or collection channels.
 
 The field radiated back onto the dipole changes source work. With the
 outgoing electric dyadic Green tensor defined by
-$\mathbf E_{\rm ref}=\mu_0\omega^2\mathbf G_{\rm ref}\mathbf p$,
+$\mathbf E_{\operatorname{ref}}=\mu_0\omega^2\mathbf G_{\operatorname{ref}}\mathbf p$,
 
 $$
-P_{\rm ref}=\frac{\omega}{2}
- \operatorname{Im}\!\left[\mathbf p^*\cdot\mathbf E_{\rm ref}\right],
-\qquad
-F_{\rm EM}=1+\frac{6\pi}{k_h}
- \operatorname{Im}\!\left[
- \hat{\mathbf e}^{\,*}\cdot\mathbf G_{\rm ref}\hat{\mathbf e}\right],
-\tag{2}
+P_{\operatorname{ref}}=\frac{\omega}{2} \operatorname{Im}\!\left[\mathbf p^*\cdot\mathbf E_{\operatorname{ref}}\right], \qquad F_{\operatorname{EM}}=1+\frac{6\pi}{k_h} \operatorname{Im}\!\left[ \hat{\mathbf e}^{\,*}\cdot\mathbf G_{\operatorname{ref}}\hat{\mathbf e}\right], \tag{2}
 $$
 
 where $\hat{\mathbf e}=\mathbf p/|\mathbf p|$. The coefficient follows by
@@ -96,12 +85,7 @@ Its squared magnitude is $1-|\hat{\mathbf e}\cdot\hat{\mathbf r}|^2$.
 Normalizing its solid-angle integral gives
 
 $$
-\frac{1}{P_h}\frac{dP}{d\Omega}
- =\frac{3}{8\pi}
-  \left(1-|\hat{\mathbf e}\cdot\hat{\mathbf r}|^2\right),
-\qquad
-d\Omega=\sin\theta\,d\theta\,d\phi.
-\tag{3}
+\frac{1}{P_h}\frac{dP}{d\Omega} =\frac{3}{8\pi} \left(1-|\hat{\mathbf e}\cdot\hat{\mathbf r}|^2\right), \qquad d\Omega=\sin\theta\,d\theta\,d\phi. \tag{3}
 $$
 
 Indeed, $\int d\Omega=4\pi$ and
@@ -113,12 +97,7 @@ Project the dipole onto the orthogonal far-field polarization axes before
 squaring:
 
 $$
-\frac{dP_s}{P_h\,d\Omega}=\frac{3}{8\pi}
- |\hat{\mathbf e}\cdot\hat{\boldsymbol\phi}|^2,
-\qquad
-\frac{dP_p}{P_h\,d\Omega}=\frac{3}{8\pi}
- |\hat{\mathbf e}\cdot\hat{\boldsymbol\theta}|^2.
-\tag{4}
+\frac{dP_s}{P_h\,d\Omega}=\frac{3}{8\pi} |\hat{\mathbf e}\cdot\hat{\boldsymbol\phi}|^2, \qquad \frac{dP_p}{P_h\,d\Omega}=\frac{3}{8\pi} |\hat{\mathbf e}\cdot\hat{\boldsymbol\theta}|^2. \tag{4}
 $$
 
 | Dipole distribution | $s$ factor, excluding $3/(8\pi)$ | $p$ factor, excluding $3/(8\pi)$ |
@@ -139,11 +118,7 @@ with $\epsilon_1=n_h^2$. Medium 2 occupies $z<0$.
 For each in-plane wavevector magnitude, define
 
 $$
-q=\frac{k_\parallel}{k_h},\qquad
-w=\sqrt{1-q^2},\qquad
-v=\sqrt{\frac{\epsilon_2}{\epsilon_1}-q^2},
-\qquad a=2k_hd=\frac{4\pi n_hd}{\lambda_0}.
-\tag{5}
+q=\frac{k_\parallel}{k_h},\qquad w=\sqrt{1-q^2},\qquad v=\sqrt{\frac{\epsilon_2}{\epsilon_1}-q^2}, \qquad a=2k_hd=\frac{4\pi n_hd}{\lambda_0}. \tag{5}
 $$
 
 On the real $q$ axis, $w$ is positive real below the host light line
@@ -152,10 +127,7 @@ outgoing/decaying prescription. Electric-field Fresnel reflection amplitudes
 are
 
 $$
-r_s=\frac{w-v}{w+v},\qquad
-r_p=\frac{\epsilon_2w-\epsilon_1v}
-           {\epsilon_2w+\epsilon_1v}.
-\tag{6}
+r_s=\frac{w-v}{w+v},\qquad r_p=\frac{\epsilon_2w-\epsilon_1v} {\epsilon_2w+\epsilon_1v}. \tag{6}
 $$
 
 Identical media give $r_s=r_p=0$. The explicit perfect-electric-conductor
@@ -166,15 +138,11 @@ The angular-spectrum representation of the reflected Green tensor,
 followed by azimuthal integration and division by (1), gives
 
 $$
-F_\perp=1+\frac32\operatorname{Re}\int_0^\infty
- \frac{q^3}{w}r_p e^{iaw}\,dq,
-\tag{7}
+F_\perp=1+\frac32\operatorname{Re}\int_0^\infty \frac{q^3}{w}r_p e^{iaw}\,dq, \tag{7}
 $$
 
 $$
-F_\parallel=1+\frac34\operatorname{Re}\int_0^\infty
- \frac{q}{w}\left(r_s-w^2r_p\right)e^{iaw}\,dq.
-\tag{8}
+F_\parallel=1+\frac34\operatorname{Re}\int_0^\infty \frac{q}{w}\left(r_s-w^2r_p\right)e^{iaw}\,dq. \tag{8}
 $$
 
 Here $\perp$ means dipole normal to the interface, not the $s$ polarization.
@@ -186,7 +154,7 @@ The ideal-mirror tests below independently constrain this sign.
 
 The $q<1$ / $q>1$ split classifies propagation **in the host**.
 A host-evanescent component can propagate in a higher-index substrate.
-Thus neither the evanescent correction nor $F_{\rm EM}$ alone is an
+Thus neither the evanescent correction nor $F_{\operatorname{EM}}$ alone is an
 absorption fraction or an external collection efficiency.
 
 ### 4.1 Removing the host light-line singularity
@@ -196,38 +164,28 @@ sampling. In the propagating sector use $u=\sqrt{1-q^2}$, so
 $q\,dq=-u\,du$. Reversing the integration limits yields
 
 $$
-\Delta F_{\perp,\rm prop}=\frac32\int_0^1
- (1-u^2)\operatorname{Re}[r_pe^{iau}]\,du,
-\tag{9}
+\Delta F_{\perp,\operatorname{prop}}=\frac32\int_0^1 (1-u^2)\operatorname{Re}[r_pe^{iau}]\,du, \tag{9}
 $$
 
 $$
-\Delta F_{\parallel,\rm prop}=\frac34\int_0^1
- \operatorname{Re}[(r_s-u^2r_p)e^{iau}]\,du.
-\tag{10}
+\Delta F_{\parallel,\operatorname{prop}}=\frac34\int_0^1 \operatorname{Re}[(r_s-u^2r_p)e^{iau}]\,du. \tag{10}
 $$
 
 For the evanescent sector set $t=\sqrt{q^2-1}$, then $w=it$,
 $q\,dq=t\,dt$ and $e^{iaw}=e^{-at}$. Finally let $x=at$:
 
 $$
-\Delta F_{\perp,\rm evan}=\frac{3}{2a}\int_0^\infty
- \left[1+\left(\frac{x}{a}\right)^2\right]
- e^{-x}\operatorname{Im}r_p\,dx,
-\tag{11}
+\Delta F_{\perp,\operatorname{evan}}=\frac{3}{2a}\int_0^\infty \left[1+\left(\frac{x}{a}\right)^2\right] e^{-x}\operatorname{Im}r_p\,dx, \tag{11}
 $$
 
 $$
-\Delta F_{\parallel,\rm evan}=\frac{3}{4a}\int_0^\infty
- e^{-x}\operatorname{Im}\left[
- r_s+\left(\frac{x}{a}\right)^2r_p\right]dx.
-\tag{12}
+\Delta F_{\parallel,\operatorname{evan}}=\frac{3}{4a}\int_0^\infty e^{-x}\operatorname{Im}\left[ r_s+\left(\frac{x}{a}\right)^2r_p\right]dx. \tag{12}
 $$
 
 The coefficients in each transformed integral are evaluated at that integral's
 $q$. The Jacobians cancel the host light-line singularity; scaling by $a$
 also makes the dominant decay envelope $e^{-x}$ independent of separation.
-The full answer is $1+\Delta F_{\rm prop}+\Delta F_{\rm evan}$.
+The full answer is $1+\Delta F_{\operatorname{prop}}+\Delta F_{\operatorname{evan}}$.
 
 ### 4.2 Branches, resonances and error gates
 
@@ -235,9 +193,7 @@ Write $\rho=\epsilon_2/\epsilon_1$. For a lossless dielectric, its light line
 appears at
 
 $$
-u_b=\sqrt{1-\rho}\quad(0<\rho<1),
-\qquad x_b=a\sqrt{\rho-1}\quad(\rho>1).
-\tag{13}
+u_b=\sqrt{1-\rho}\quad(0<\rho<1), \qquad x_b=a\sqrt{\rho-1}\quad(\rho>1). \tag{13}
 $$
 
 Splitting there helps resolve changes in the substrate root. Weak loss moves
@@ -245,16 +201,15 @@ these branch locations off the real axis; the integration intervals are split
 around their projected centers and widths.
 
 A $p$ surface-mode denominator in (6) gives
-$q_{\rm sp}^2=\rho/(\rho+1)$ and hence
+$q_{\operatorname{sp}}^2=\rho/(\rho+1)$ and hence
 
 $$
-t_{\rm sp}=\sqrt{-\frac{1}{\rho+1}},\qquad x_{\rm sp}=at_{\rm sp}.
-\tag{14}
+t_{\operatorname{sp}}=\sqrt{-\frac{1}{\rho+1}},\qquad x_{\operatorname{sp}}=at_{\operatorname{sp}}. \tag{14}
 $$
 
 For supported lossy-metal cases, intervals around
-$\operatorname{Re}x_{\rm sp}$ span geometrically increasing multiples of
-$|\operatorname{Im}x_{\rm sp}|$. This resolves narrow resonances and wings
+$\operatorname{Re}x_{\operatorname{sp}}$ span geometrically increasing multiples of
+$|\operatorname{Im}x_{\operatorname{sp}}|$. This resolves narrow resonances and wings
 better than a single large adaptive interval.
 
 The implementation integrates to infinity, using an initial tail split
@@ -264,11 +219,7 @@ Per-interval absolute budgets share the scaled absolute tolerance.
 For each orientation it checks the summed quadrature error estimate and
 
 $$
-\delta_{\rm refine}=
- |\Delta F_{\rm prop}^{(2)}-\Delta F_{\rm prop}^{(1)}|
- +|\Delta F_{\rm evan}^{(2)}-\Delta F_{\rm evan}^{(1)}|
- \leq \max(\mathrm{atol},\mathrm{rtol}|F|).
-\tag{15}
+\delta_{\operatorname{refine}}= |\Delta F_{\operatorname{prop}}^{(2)}-\Delta F_{\operatorname{prop}}^{(1)}| +|\Delta F_{\operatorname{evan}}^{(2)}-\Delta F_{\operatorname{evan}}^{(1)}| \leq \max(\operatorname{atol},\operatorname{rtol}|F|). \tag{15}
 $$
 
 Failures, nonfinite results and negative total rates raise errors; rates are
@@ -287,20 +238,13 @@ that local continuum material constants remain valid at molecular distances.
 For an ideal mirror, image-dipole interference gives
 
 $$
-F_\perp=1+3\frac{\sin a-a\cos a}{a^3},
-\qquad
-F_\parallel=1-\frac32\left(
- \frac{\sin a}{a}+\frac{\cos a}{a^2}-\frac{\sin a}{a^3}\right).
-\tag{16}
+F_\perp=1+3\frac{\sin a-a\cos a}{a^3}, \qquad F_\parallel=1-\frac32\left( \frac{\sin a}{a}+\frac{\cos a}{a^2}-\frac{\sin a}{a^3}\right). \tag{16}
 $$
 
 Series expansion avoids cancellation near the surface:
 
 $$
-F_\perp=2-\frac{a^2}{10}+\frac{a^4}{280}+O(a^6),
-\qquad
-F_\parallel=\frac{a^2}{5}-\frac{3a^4}{280}+O(a^6).
-\tag{17}
+F_\perp=2-\frac{a^2}{10}+\frac{a^4}{280}+O(a^6), \qquad F_\parallel=\frac{a^2}{5}-\frac{3a^4}{280}+O(a^6). \tag{17}
 $$
 
 The vertical image reinforces the source while the horizontal image cancels
@@ -312,12 +256,7 @@ $r_s\to0$, $r_p\to(\epsilon_2-\epsilon_1)/(\epsilon_2+\epsilon_1)$.
 Using $\int_0^\infty x^2e^{-x}dx=2$ in (11)-(12) yields
 
 $$
-\Delta F_\perp\sim\frac{3}{a^3}
- \operatorname{Im}\frac{\epsilon_2-\epsilon_1}{\epsilon_2+\epsilon_1},
-\qquad
-\Delta F_\parallel\sim\frac{3}{2a^3}
- \operatorname{Im}\frac{\epsilon_2-\epsilon_1}{\epsilon_2+\epsilon_1}.
-\tag{18}
+\Delta F_\perp\sim\frac{3}{a^3} \operatorname{Im}\frac{\epsilon_2-\epsilon_1}{\epsilon_2+\epsilon_1}, \qquad \Delta F_\parallel\sim\frac{3}{2a^3} \operatorname{Im}\frac{\epsilon_2-\epsilon_1}{\epsilon_2+\epsilon_1}. \tag{18}
 $$
 
 This explains the leading inverse-cube dependence and two-to-one orientation
@@ -330,14 +269,11 @@ For tabulated data between $\lambda_i$ and $\lambda_{i+1}$, the current
 interpolator applies independently to $n$ and $\kappa$:
 
 $$
-f(\lambda)=f_i+
- \frac{\lambda-\lambda_i}{\lambda_{i+1}-\lambda_i}(f_{i+1}-f_i),
-\qquad f\in\{n,\kappa\}.
-\tag{19}
+f(\lambda)=f_i+ \frac{\lambda-\lambda_i}{\lambda_{i+1}-\lambda_i}(f_{i+1}-f_i), \qquad f\in\{n,\kappa\}. \tag{19}
 $$
 
 Native database wavelengths in micrometers are converted to nm:
-$\lambda_{\rm nm}=1000\lambda_{\rm um}$.
+$\lambda_{\operatorname{nm}}=1000\lambda_{\operatorname{um}}$.
 No extrapolation is allowed. Separate $n$ and $\kappa$ tables must both cover
 the query, so their usable domain is their intersection. Missing extinction
 data require an explicit, recorded lossless assumption; missing data are not
@@ -347,12 +283,8 @@ The supported native Sellmeier records use $\lambda$ in **micrometers**:
 
 $$
 \begin{aligned}
-\text{formula 1:}\quad
-n^2(\lambda)=1+c_0+\sum_m
- \frac{B_m\lambda^2}{\lambda^2-C_m^2},\\
-\text{formula 2:}\quad
-n^2(\lambda)=1+c_0+\sum_m
- \frac{B_m\lambda^2}{\lambda^2-C_m}.
+\text{formula 1:}\; n^2(\lambda)=1+c_0+\sum_m \frac{B_m\lambda^2}{\lambda^2-C_m^2}, \\
+\text{formula 2:}\; n^2(\lambda)=1+c_0+\sum_m \frac{B_m\lambda^2}{\lambda^2-C_m}.
 \end{aligned}
 \tag{20}
 $$
@@ -365,9 +297,7 @@ Each layer has its own $N_j(\lambda)$ and thickness $d_j$. For a plane-wave
 component with conserved $k_\parallel$,
 
 $$
-k_{z,j}=\sqrt{N_j^2k_0^2-k_\parallel^2},
-\qquad \delta_j=k_{z,j}d_j.
-\tag{21}
+k_{z,j}=\sqrt{N_j^2k_0^2-k_\parallel^2}, \qquad \delta_j=k_{z,j}d_j. \tag{21}
 $$
 
 Thickness changes phase and attenuation, while dispersion changes propagation
@@ -378,9 +308,7 @@ The implemented diagnostic calls the coherent transfer-matrix calculation
 for both incident polarizations and averages their **powers**:
 
 $$
-R=\frac{R_s+R_p}{2},\qquad
-T=\frac{T_s+T_p}{2},\qquad A=1-R-T.
-\tag{22}
+R=\frac{R_s+R_p}{2},\qquad T=\frac{T_s+T_p}{2},\qquad A=1-R-T. \tag{22}
 $$
 
 For the enforced lossless exterior media, power transmission includes
@@ -404,34 +332,23 @@ Define an intrinsic radiative rate in the homogeneous reference,
 $\Gamma_{r,h}$, and a fixed intrinsic nonradiative rate $\Gamma_{nr}$:
 
 $$
-q_0=\frac{\Gamma_{r,h}}{\Gamma_{r,h}+\Gamma_{nr}},
-\qquad
-\Gamma_{nr}=\Gamma_{r,h}\frac{1-q_0}{q_0}
-\quad(0<q_0\leq1).
-\tag{23}
+q_0=\frac{\Gamma_{r,h}}{\Gamma_{r,h}+\Gamma_{nr}}, \qquad \Gamma_{nr}=\Gamma_{r,h}\frac{1-q_0}{q_0} \quad(0<q_0\leq1). \tag{23}
 $$
 
 The optical budgets must share that reference:
 
 $$
-F_t=\frac{P_{\rm EM}}{P_h},\qquad
-F_e=\frac{P_{\rm collected}}{P_h},\qquad
-0\leq F_e\leq F_t.
-\tag{24}
+F_t=\frac{P_{\operatorname{EM}}}{P_h},\qquad F_e=\frac{P_{\operatorname{collected}}}{P_h},\qquad 0\leq F_e\leq F_t. \tag{24}
 $$
 
-Then $\Gamma_{\rm EM}=F_t\Gamma_{r,h}$ and
-$\Gamma_{\rm collected}=F_e\Gamma_{r,h}$. Under linear, unsaturated excitation,
+Then $\Gamma_{\operatorname{EM}}=F_t\Gamma_{r,h}$ and
+$\Gamma_{\operatorname{collected}}=F_e\Gamma_{r,h}$. Under linear, unsaturated excitation,
 the probability of a collected photon per emissive excitation is its collected
 rate divided by its entire decay rate. Multiplying by charge-balance
 $\eta_c$ and emissive-exciton formation $\eta_x$ gives
 
 $$
-\mathrm{EQE}_{\rm mono}(\lambda)=
- \eta_c\eta_x
- \frac{q_0F_e(\lambda)}
- {1-q_0+q_0F_t(\lambda)}.
-\tag{25}
+\operatorname{EQE}_{\operatorname{mono}}(\lambda)= \eta_c\eta_x \frac{q_0F_e(\lambda)} {1-q_0+q_0F_t(\lambda)}. \tag{25}
 $$
 
 The API requires all three efficiencies explicitly. Thickness and optical
@@ -451,34 +368,24 @@ different choices of $F_e$.
 Let $S_0(\lambda)$ be the intrinsic **photon** spectral density:
 
 $$
-S_0(\lambda)\geq0,\qquad
-\int S_0(\lambda)\,d\lambda=1.
-\tag{26}
+S_0(\lambda)\geq0,\qquad \int S_0(\lambda)\,d\lambda=1. \tag{26}
 $$
 
-For wavelengths in nm its units are $\mathrm{nm}^{-1}$.
+For wavelengths in nm its units are $\operatorname{nm}^{-1}$.
 The full transition distribution sets one population lifetime:
 
 $$
-\Gamma_{\rm EM}=\Gamma_{r,h}\int
- S_0(\lambda)F_t(\lambda)\,d\lambda.
-\tag{27}
+\Gamma_{\operatorname{EM}}=\Gamma_{r,h}\int S_0(\lambda)F_t(\lambda)\,d\lambda. \tag{27}
 $$
 
 Consequently,
 
 $$
-D=1-q_0+q_0\int S_0(\lambda)F_t(\lambda)\,d\lambda,
-\qquad
-\frac{d\,\mathrm{EQE}}{d\lambda}
- =\eta_c\eta_x\frac{q_0S_0(\lambda)F_e(\lambda)}{D},
-\tag{28}
+D=1-q_0+q_0\int S_0(\lambda)F_t(\lambda)\,d\lambda, \qquad \frac{d\,\operatorname{EQE}}{d\lambda} =\eta_c\eta_x\frac{q_0S_0(\lambda)F_e(\lambda)}{D}, \tag{28}
 $$
 
 $$
-\mathrm{EQE}_{\rm broadband}
- =\int\frac{d\,\mathrm{EQE}}{d\lambda}\,d\lambda.
-\tag{29}
+\operatorname{EQE}_{\operatorname{broadband}} =\int\frac{d\,\operatorname{EQE}}{d\lambda}\,d\lambda. \tag{29}
 $$
 
 Using a separate denominator from (25) in each bin would assign independent
@@ -486,20 +393,14 @@ lifetimes to the bins of this same emitter and changes the physical model.
 The implementation uses trapezoidal integration on the supplied grid:
 
 $$
-\int f(\lambda)d\lambda\ \simeq\
-\sum_{i=0}^{L-2}
-\frac{\lambda_{i+1}-\lambda_i}{2}(f_i+f_{i+1}).
-\tag{30}
+\int f(\lambda)d\lambda\ \simeq\ \sum_{i=0}^{L-2} \frac{\lambda_{i+1}-\lambda_i}{2}(f_i+f_{i+1}). \tag{30}
 $$
 
 If a measured input is spectral power density $I_\lambda$, first convert
 to photon weights:
 
 $$
-S_0(\lambda)=
-\frac{I_\lambda(\lambda)\lambda/(hc)}
- {\int I_\lambda(\lambda')\lambda'/(hc)\,d\lambda'}.
-\tag{31}
+S_0(\lambda)= \frac{I_\lambda(\lambda)\lambda/(hc)} {\int I_\lambda(\lambda')\lambda'/(hc)\,d\lambda'}. \tag{31}
 $$
 
 Use compatible units when evaluating photon energy. A consistently applied
@@ -517,10 +418,7 @@ cross terms in the integrated response. A dipole at polar angle $\alpha$
 has vertical weight
 
 $$
-w_\perp=\frac{|p_z|^2}{|\mathbf p|^2}=\cos^2\alpha,
-\qquad
-F(w_\perp)=w_\perp F_\perp+(1-w_\perp)F_\parallel.
-\tag{32}
+w_\perp=\frac{|p_z|^2}{|\mathbf p|^2}=\cos^2\alpha, \qquad F(w_\perp)=w_\perp F_\perp+(1-w_\perp)F_\parallel. \tag{32}
 $$
 
 This applies separately to total and collected optical rates, provided the
@@ -532,21 +430,14 @@ Uniform solid-angle sampling is obtained with independent
 $u,v\sim U(0,1)$:
 
 $$
-\mu=2u-1,\quad\phi=2\pi v,\quad
-\hat{\mathbf e}=
- \left(\sqrt{1-\mu^2}\cos\phi,\,
-       \sqrt{1-\mu^2}\sin\phi,\,\mu\right).
-\tag{33}
+\mu=2u-1,\quad\phi=2\pi v,\quad \hat{\mathbf e}= \left(\sqrt{1-\mu^2}\cos\phi,\, \sqrt{1-\mu^2}\sin\phi,\,\mu\right). \tag{33}
 $$
 
 Sampling $\alpha$ uniformly instead would oversample the polar directions.
 Since $\mu$ is uniform on $[-1,1]$,
 
 $$
-\langle w_\perp\rangle=\frac12\int_{-1}^1\mu^2d\mu=\frac13,
-\qquad
-F_{\rm iso}=\frac13F_\perp+\frac23F_\parallel.
-\tag{34}
+\langle w_\perp\rangle=\frac12\int_{-1}^1\mu^2d\mu=\frac13, \qquad F_{\operatorname{iso}}=\frac13F_\perp+\frac23F_\parallel. \tag{34}
 $$
 
 ### 7.2 Fixed dipoles versus rapid reorientation
@@ -555,20 +446,14 @@ Write $C=\eta_c\eta_x$. For equally excited fixed dipoles, each orientation
 has its own lifetime; therefore average individual yields:
 
 $$
-\mathrm{EQE}_{\rm fixed}
- =\frac{C}{N}\sum_{i=1}^N
- \frac{q_0F_{e,i}}{1-q_0+q_0F_{t,i}}.
-\tag{35}
+\operatorname{EQE}_{\operatorname{fixed}} =\frac{C}{N}\sum_{i=1}^N \frac{q_0F_{e,i}}{1-q_0+q_0F_{t,i}}. \tag{35}
 $$
 
 If reorientation is rapid relative to decay and samples the stipulated
 orientation distribution, average the rates first:
 
 $$
-\mathrm{EQE}_{\rm reorient}
- =C\frac{q_0\langle F_e\rangle}
- {1-q_0+q_0\langle F_t\rangle}.
-\tag{36}
+\operatorname{EQE}_{\operatorname{reorient}} =C\frac{q_0\langle F_e\rangle} {1-q_0+q_0\langle F_t\rangle}. \tag{36}
 $$
 
 Averages and nonlinear ratios generally do not commute. For example,
@@ -576,10 +461,7 @@ with $q_0=C=1$, equally weighted vertical $(F_t,F_e)=(4,1)$
 and horizontal $(1,0.5)$ budgets give
 
 $$
-\mathrm{EQE}_{\rm fixed}=\tfrac12(1/4+1/2)=0.375,
-\qquad
-\mathrm{EQE}_{\rm reorient}=\frac{0.75}{2.5}=0.3.
-\tag{37}
+\operatorname{EQE}_{\operatorname{fixed}}=\tfrac12(1/4+1/2)=0.375, \qquad \operatorname{EQE}_{\operatorname{reorient}}=\frac{0.75}{2.5}=0.3. \tag{37}
 $$
 
 These are illustrative budgets, not a measured device.
@@ -595,14 +477,7 @@ For a normalized excitation distribution $g(\mathbf r,\hat{\mathbf e})$,
 the fixed-emitter monochromatic extension would be
 
 $$
-\mathrm{EQE}_{\rm fixed}
- =C\int g(\mathbf r,\hat{\mathbf e})
- \frac{q_0F_e(\lambda;\mathbf r,\hat{\mathbf e})}
- {1-q_0+q_0F_t(\lambda;\mathbf r,\hat{\mathbf e})}
- \,d^3r\,d\Omega_e,
-\quad
-\int g\,d^3r\,d\Omega_e=1.
-\tag{38}
+\operatorname{EQE}_{\operatorname{fixed}} =C\int g(\mathbf r,\hat{\mathbf e}) \frac{q_0F_e(\lambda;\mathbf r,\hat{\mathbf e})} {1-q_0+q_0F_t(\lambda;\mathbf r,\hat{\mathbf e})} \,d^3r\,d\Omega_e, \quad \int g\,d^3r\,d\Omega_e=1. \tag{38}
 $$
 
 Here the intrinsic/electrical factors are assumed uniform; nonuniform factors
@@ -616,8 +491,7 @@ but not lateral source position. For uniform excitation and active density
 $\rho_a$ in area $A$ and emitting thickness $h$,
 
 $$
-V=Ah,\qquad N_{\rm active}=\rho_aAh.
-\tag{39}
+V=Ah,\qquad N_{\operatorname{active}}=\rho_aAh. \tag{39}
 $$
 
 Area increases photons and injected carriers together; normalized EQE need
@@ -631,10 +505,7 @@ configurations, $J$ finite layers and $Q$ quadrature evaluations per orientation
 including refinements. Two reusable bases give
 
 $$
-N_{\rm basis}=2LZC_d,\qquad
-N_{\rm layer}=2LZC_dQJ,\qquad
-W_{\rm planar}=f_\ell N_{\rm layer}.
-\tag{40}
+N_{\operatorname{basis}}=2LZC_d,\qquad N_{\operatorname{layer}}=2LZC_dQJ,\qquad W_{\operatorname{planar}}=f_\ell N_{\operatorname{layer}}. \tag{40}
 $$
 
 $f_\ell$ is an assumed FLOP count per layer evaluation, not measured recursion
@@ -647,14 +518,10 @@ For $b$ bytes per real number, the implemented planning allocation is
 
 $$
 \begin{aligned}
-B_{\rm workspace}
- &=b\left[16(J+2)+2L(J+2)+8L\right],\\
-B_{\rm retained}
- &=4bLZC_d,\\
-B_{\rm directions}
- &=3bN\quad\text{if all sampled directions are retained},\\
-W_{\rm composition}
- &\simeq20LN\quad\text{operations for one composition workload}.
+B_{\operatorname{workspace}} &=b\left[16(J+2)+2L(J+2)+8L\right], \\
+B_{\operatorname{retained}} &=4bLZC_d, \\
+B_{\operatorname{directions}} &=3bN\quad\text{if all sampled directions are retained}, \\
+W_{\operatorname{composition}} &\simeq20LN\quad\text{operations for one composition workload}.
 \end{aligned}
 \tag{41}
 $$
@@ -678,17 +545,13 @@ For physical dimensions $\ell_x,\ell_y,\ell_z$, cubic cell size $\Delta$
 and $p$ PML cells on each face:
 
 $$
-n_i=\left\lceil\frac{\ell_i}{\Delta}\right\rceil+2p,\qquad
-N_{\rm cell}=n_xn_yn_z.
-\tag{42}
+n_i=\left\lceil\frac{\ell_i}{\Delta}\right\rceil+2p,\qquad N_{\operatorname{cell}}=n_xn_yn_z. \tag{42}
 $$
 
 With $A_r$ allocated real arrays per cell and $b$ bytes per real:
 
 $$
-B_{\rm raw}=N_{\rm cell}A_rb,\qquad
-B_{\rm provisioned}=\left\lceil1.3B_{\rm raw}\right\rceil.
-\tag{43}
+B_{\operatorname{raw}}=N_{\operatorname{cell}}A_rb,\qquad B_{\operatorname{provisioned}}=\left\lceil1.3B_{\operatorname{raw}}\right\rceil. \tag{43}
 $$
 
 At least six arrays represent the electromagnetic components; the default
@@ -700,12 +563,7 @@ For nondispersive media with fastest speed $v_{\max}=c/n_{\min}$,
 the cubic-grid Courant bound and chosen timestep are
 
 $$
-\Delta t\leq\frac{\Delta}{v_{\max}\sqrt3},
-\qquad
-\Delta t_{\rm model}=0.99\frac{n_{\min}\Delta}{c\sqrt3},
-\qquad
-N_t=\left\lceil\frac{T_{\rm sim}}{\Delta t_{\rm model}}\right\rceil.
-\tag{44}
+\Delta t\leq\frac{\Delta}{v_{\max}\sqrt3}, \qquad \Delta t_{\operatorname{model}}=0.99\frac{n_{\min}\Delta}{c\sqrt3}, \qquad N_t=\left\lceil\frac{T_{\operatorname{sim}}}{\Delta t_{\operatorname{model}}}\right\rceil. \tag{44}
 $$
 
 The **minimum**, not maximum, nondispersive index sets the fastest-wave
@@ -716,9 +574,7 @@ For $S$ independent source runs, $f_c$ FLOPs and $b_c$ bytes transferred
 per cell-step:
 
 $$
-U=N_{\rm cell}N_tS,\qquad W_{\rm FDTD}=f_cU,\qquad
-B_{\rm traffic}=b_cU.
-\tag{45}
+U=N_{\operatorname{cell}}N_tS,\qquad W_{\operatorname{FDTD}}=f_cU,\qquad B_{\operatorname{traffic}}=b_cU. \tag{45}
 $$
 
 Sequential source runs multiply work, not resident grid memory. Concurrent
@@ -731,10 +587,7 @@ Given **user-supplied sustained** arithmetic throughput $R_F$ and memory
 bandwidth $R_B$, the optional ideal roofline is
 
 $$
-t_{\rm ideal}\geq
-\max\left(\frac{W_{\rm FDTD}}{R_F},
-          \frac{B_{\rm traffic}}{R_B}\right).
-\tag{46}
+t_{\operatorname{ideal}}\geq \max\left(\frac{W_{\operatorname{FDTD}}}{R_F}, \frac{B_{\operatorname{traffic}}}{R_B}\right). \tag{46}
 $$
 
 The tool reports the maximum as an ideal lower-bound estimate, not predicted
@@ -750,7 +603,7 @@ No sustained GPU rate or GPU runtime was inferred from a device model name.
 At $\lambda_0=550$ nm, $d=20$ nm, $n_h=1$ and synthetic
 $\epsilon_2=-5+0.5i$, the implemented one-interface kernels give:
 
-| Orientation | $P_{\rm EM}/P_h$ |
+| Orientation | $P_{\operatorname{EM}}/P_h$ |
 |---|---:|
 | Horizontal plane | 2.07017658 |
 | Vertical | 7.75799635 |
@@ -772,7 +625,7 @@ speed predictions. No process peak-RAM measurement was performed.
 
 Assume $\Delta=10$ nm, physical simulated depth $1$ micrometer,
 emitting depth $0.1$ micrometer, $p=10$, $A_r=24$, float32,
-$T_{\rm sim}=200$ fs, $n_{\min}=1$, $S=60$,
+$T_{\operatorname{sim}}=200$ fs, $n_{\min}=1$, $S=60$,
 $f_c=300$ and $b_c=192$ bytes. Double precision needs a separately revised
 traffic assumption as well as larger allocated arrays.
 
