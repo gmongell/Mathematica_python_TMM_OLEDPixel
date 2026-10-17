@@ -4,16 +4,18 @@ See the [consolidated mathematical record](MATHEMATICAL_DERIVATIONS.md)
 for rendered LaTeX equations and their dipole/ensemble/resource rationale.
 
 Research milestone, 2026-10-16. Implemented foundations are in `spectral_eqe.py`.
-**There is not yet a finite emitting-layer multilayer source solver.**
-The data catalog, stack evaluator, plane-wave checks and EQE rate composition
-are working components, not a complete device-performance prediction.
+**A planar finite emitting-layer source solver now exists in `multilayer_dipole.py`**
+(one wavelength per solve; see section 12 of the derivations). It reports source work and
+top/bottom exit flux; it does not separate guided from absorbed power, handle anisotropic
+layers, model charge transport or optimize stacks. The data catalog, stack evaluator and
+EQE composition are working components, not a complete device-performance prediction.
 
 ## What wavelength-specific EQE means
 
 Let a stack be defined by thicknesses d_j and relative complex indices
 $N_j(\lambda)=n_j(\lambda)+ik_j(\lambda)$, under $e^{-i\omega t}$.
 For a specified emitter position, dipole orientation and collection geometry,
-the eventual emitting-source solver must compute, each as a function of $(\lambda;\{d_j,N_j\},z,\text{orientation})$:
+the emitting-source solver computes (or must still compute, where noted), each as a function of $(\lambda;\{d_j,N_j\},z,\text{orientation})$:
 
 $$
 \begin{aligned}
@@ -208,13 +210,25 @@ transition arrays, planar isotropic media and azimuth-integrated collection.
 Broadband, spatially distributed fixed-emitter populations require per-population
 integrated rate denominators before averaging; they are not implemented here.
 
-## Remaining finite-stack physics
+## Stack-derived optical rates and remaining physics
 
-The stack is now wired to dispersive data, but it is **not yet wired to a
-finite emitting-layer source solver**. Next implement and validate stable
-multiple reflection for dipole source terms between both interfaces,
-orientation-resolved source work, emitted far-field flux, absorption and
-guided-channel accounting with energy/convergence diagnostics.
-Only then produce layer-thickness-dependent EQE from a stack automatically.
-The existing single-interface source-work kernel alone supplies no collected
-power, and plane-wave transmittance must not fill that gap.
+`emitter_rate_budget` solves the emitter in a `DispersiveStack` at each wavelength and returns an
+`OpticalRateBudget` whose escape rate is the flux into the chosen exit half-space (`"exit_medium"`)
+or a first-pass lower bound into air through a thick exit medium (`"air_first_pass"`):
+
+```python
+from multilayer_dipole import emitter_rate_budget
+
+budget = emitter_rate_budget(
+    stack, lake, wavelengths_nm, exit="bottom", collection="air_first_pass",
+    vertical_fraction=0.2,            # orientation order parameter, not a re-orienting ensemble
+)
+eqe = budget.monochromatic_eqe(intrinsic_yield=0.8, charge_balance=0.9, exciton_yield=1.0)
+```
+
+The solver refuses lossless guiding layers (their guided-mode power is a delta function the
+quadrature cannot see); give a guiding layer a small passive `k`. Still to be built and validated:
+guided/plasmon/absorption separation, anisotropic layers, emission-zone weighting from charge
+transport, and substrate-to-air recycling. Plane-wave transmittance must not replace the
+collected-emission calculation, and measured-device comparison is required before any
+performance claim.

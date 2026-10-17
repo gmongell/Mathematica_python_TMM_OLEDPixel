@@ -139,10 +139,13 @@ non-extrapolating n+ik evaluation, wavelength-resolved layer stacks, explicit
 EQE rate composition, incoherent orientation comparisons, and CPU/GPU/RAM
 workload estimates. No cloud account is required or provisioned.
 
-**Scope boundary:** stack-dependent plane-wave R/T/A is wired; finite-layer
-dipole emission/collected-flux physics is not yet implemented. EQE composition
-requires externally derived physical source-work/escape-rate budgets, not
-plane-wave T. The resource estimator is not an implemented GPU/FDTD solver.
+**Scope boundary:** stack-dependent plane-wave R/T/A is wired, and a planar
+multilayer dipole source-work/exit-flux solver (`multilayer_dipole`, research
+API, one wavelength per solve) exists. Not implemented: guided/absorbed/plasmon
+separation, anisotropic layers, charge transport, optimization, GPU/FDTD.
+Plane-wave T must not stand in for emitted flux. The resource estimator is not
+an implemented GPU/FDTD solver. See section 12 of the
+[derivations](docs/MATHEMATICAL_DERIVATIONS.md).
 
 ### Research dipole reference API
 

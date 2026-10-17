@@ -35,7 +35,7 @@ mongelli-resource-study = "simulation_resources:main"
 Repository = "https://github.com/gmongell/Mathematica_python_TMM_OLEDPixel"
 
 [tool.setuptools]
-py-modules = ["tmm_OLED9", "dipole_reference", "spectral_eqe", "simulation_resources"]
+py-modules = ["tmm_OLED9", "dipole_reference", "spectral_eqe", "simulation_resources", "multilayer_dipole"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

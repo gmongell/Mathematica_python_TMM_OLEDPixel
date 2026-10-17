@@ -19,7 +19,8 @@ their rationale, numerical transformations and planning estimates.
 | Monochromatic/broadband EQE from supplied physical rate budgets | Implemented composition, not automatic stack-derived EQE | [spectral_eqe.py](../spectral_eqe.py) |
 | Fixed versus reorienting dipole ensembles | Implemented for monochromatic transition arrays | [spectral_eqe.py](../spectral_eqe.py) |
 | Planar workload, finite-pixel FDTD memory/work and optional roofline | Planning models only | [simulation_resources.py](../simulation_resources.py), [resource guide](ENSEMBLE_RESOURCE_ESTIMATES.md) |
-| Finite emitting-layer multilayer source/escape calculation | Not implemented | [solver acceptance specification](OLED_SOLVER_SPEC.md) |
+| Planar multilayer emitter source work, top/bottom exit flux, first-pass air collection | Implemented for one wavelength; energy-balance and cross-code tests (section 12) | [multilayer_dipole.py](../multilayer_dipole.py) |
+| Guided/absorbed channel separation, anisotropic layers, charge transport, optimizer | Not implemented | [solver acceptance specification](OLED_SOLVER_SPEC.md) |
 | Spatially integrated device EQE, finite-pixel FDTD, GPU backend | Not implemented | Future work; formulas below identify requirements, not delivered solvers |
 
 In particular, source work, external illumination transmission, collected
@@ -677,15 +678,99 @@ experimental validation of full OLED device predictions.
 | Planar workload and population scaling | `test_planar_two_bases_reuse_random_ensemble`, `test_area_volume_population_scaling` in [resource tests](../tests/test_simulation_resources.py) |
 | FDTD grid/CFL/memory/roofline | `test_fdtd_grid_cfl_memory_and_roofline_arithmetic`, `test_fdtd_independent_emitters_scale_work_not_serial_memory` in [resource tests](../tests/test_simulation_resources.py) |
 
-The missing central physics is a stable finite-emitting-layer Green/source
-calculation between both interfaces, including multiple reflection feedback,
-external emitted flux, absorption and guided channels with independent energy
-and convergence checks. Only after deriving and validating those budgets
-can (25) or (28) produce automatic thickness/index-dependent stack EQE.
-Incident plane-wave $T$ and single-interface total source work must not
-be substituted for that missing collected-emission calculation.
+The planar multilayer source/flux calculation (section 12) now supplies the optical rates for (25) or (28)
+through `emitter_rate_budget`. Still missing: separation of guided, plasmonic and absorbed power,
+anisotropic layers, spatial emission-zone weighting, substrate-to-air recycling, and comparison with
+measured devices. Incident plane-wave $T$ and single-interface total source work must not be substituted
+for the collected-emission calculation.
 
-## 12. Sources and rights
+## 12. Multilayer emitter source work and exit flux
+
+Implemented in [multilayer_dipole.py](../multilayer_dipole.py). Let the emitter layer have real index $n_e$,
+$\kappa=k_\parallel/k_0=n_eu$ (so $u$ is the $q$ of sections 4 and 5), $w=k_{z,e}/k_e$, $d_1,d_2$ the distances to the
+top and bottom interfaces of the emitter layer, and $D=d_1+d_2$. Each layer has
+$k_{z,j}=k_0\sqrt{\epsilon_j-\kappa^2}$ with $\operatorname{Im}k_{z,j}\ge0$.
+
+**Interfaces.** For a wave going from medium $i$ into medium $t$ ($s$: electric-field amplitude; $p$: magnetic-field
+amplitude, so $r_p=+1$ for a perfect conductor):
+
+$$
+r^s_{it}=\frac{k_{z,i}-k_{z,t}}{k_{z,i}+k_{z,t}},\quad t^s_{it}=\frac{2k_{z,i}}{k_{z,i}+k_{z,t}},\quad r^p_{it}=\frac{\epsilon_tk_{z,i}-\epsilon_ik_{z,t}}{\epsilon_tk_{z,i}+\epsilon_ik_{z,t}},\quad t^p_{it}=\frac{2\epsilon_tk_{z,i}}{\epsilon_tk_{z,i}+\epsilon_ik_{z,t}} \tag{47}
+$$
+
+**Stack recursion.** Number the layers from the exit half-space ($j=0$) to the emitter layer. With
+$\phi_j=e^{ik_{z,j}d_j}$, $r=r_{k,k-1}$, $t=t_{k,k-1}$, starting from $\Gamma_1=r_{1,0}$, $\tau_1=t_{1,0}$:
+
+$$
+\Gamma_k=\frac{r+\Gamma_{k-1}\phi_{k-1}^2}{1+r\,\Gamma_{k-1}\phi_{k-1}^2},\qquad \tau_k=\frac{t\,\phi_{k-1}\,\tau_{k-1}}{1+r\,\Gamma_{k-1}\phi_{k-1}^2} \tag{48}
+$$
+
+This gives $(r_t,\tau_t)$ looking up and $(r_b,\tau_b)$ looking down from the emitter layer, for each polarization.
+
+**Cavity feedback.** With $\rho=r_tr_b\,e^{2ik_{z,e}D}$ and $e_{1,2}=e^{2ik_{z,e}d_{1,2}}$, summing all multiple
+reflections gives the scattered-to-incident field ratio at the dipole. Here $\alpha=+1$ for a source symmetric in
+up/down $E_z$ or $E_y$ and $\alpha=-1$ for the antisymmetric in-plane $p$ source:
+
+$$
+S_\alpha=\alpha\,\frac{r_te_1+r_be_2+2\alpha\rho}{1-\rho},\qquad S_\perp=S_{+}^{p},\quad S_{\parallel,s}=S_{+}^{s},\quad S_{\parallel,p}=S_{-}^{p} \tag{49}
+$$
+
+**Source work** (reduces to equations (7) and (8) when $r_b=0$):
+
+$$
+F_\perp=\operatorname{Re}\!\int_0^\infty\!\frac{3u^3}{2w}\left(1+S_\perp\right)du,\qquad F_\parallel=\operatorname{Re}\!\int_0^\infty\!\frac{3u}{4w}\left[1+S_{\parallel,s}+w^2\left(1+S_{\parallel,p}\right)\right]du \tag{50}
+$$
+
+**Exit flux.** The up- and down-going amplitudes at the dipole plane, per unit source amplitude, are
+$(1+\alpha r_be_2)/(1-\rho)$ and $(\alpha+r_te_1)/(1-\rho)$. The amplitudes entering the top and bottom half-spaces are:
+
+$$
+T_{\operatorname{top}}=\tau_t\,e^{ik_{z,e}d_1}\,\frac{1+\alpha r_be_2}{1-\rho},\qquad T_{\operatorname{bot}}=\tau_b\,e^{ik_{z,e}d_2}\,\frac{\alpha+r_te_1}{1-\rho} \tag{51}
+$$
+
+$$
+F_{\operatorname{exit}}=\int_0^\infty G_c(u)\,Y_{\operatorname{exit}}(u)\,|T_{\operatorname{exit}}|^2\,du,\quad Y_s=\operatorname{Re}k_{z},\;Y_p=\operatorname{Re}\frac{k_{z}}{\epsilon},\quad G_\perp=\frac{3n_eu^3}{4|w|^2},\;G_{\parallel s}=\frac{3u}{8n_e|w|^2},\;G_{\parallel p}=\frac{3n_eu}{8} \tag{52}
+$$
+
+$G_c$ is half the homogeneous source density divided by the emitter-medium flux weight, continued to $u>1$ with $|w|$
+for tunnelling into a denser exit medium. A lossy half-space reports no exit flux; its absorbed power stays in the
+remainder.
+
+**Energy identity.** This is an independent check, because (50) uses the field at the dipole while (52) uses far-field
+amplitudes. For a lossless stack without guided modes the remainder vanishes:
+
+$$
+F_{\operatorname{other}}\equiv F_{\operatorname{total}}-F_{\operatorname{top}}-F_{\operatorname{bottom}}\ge0,\qquad F_{\operatorname{other}}=0\;\text{(lossless, no guided modes)} \tag{53}
+$$
+
+$F_{\operatorname{other}}$ collects guided modes, absorption and plasmons and is not separated further. The first-pass
+air collection multiplies the exit-medium flux by the exit/air Fresnel power transmittance once; it ignores light
+returned into the stack, so it is a lower bound.
+
+**Numerics.** Each panel between the breakpoints $u=\operatorname{Re}n_j/n_e$ uses
+$u=a+(b-a)(1-\cos\theta)/2$ to remove square-root endpoint singularities, then adaptive bisection in $\theta$ with
+Gauss-Legendre order 10 and a whole-versus-halves error estimate. A dense scan of $|1-\rho|$ adds refined resonance
+locations as breakpoints. Lossless guiding layers have real-axis poles whose delta-function power is invisible to
+quadrature, so the solver raises `DipoleConvergenceError` for them (give the guide a small passive $\operatorname{Im}n$).
+The error estimate is not a rigorous bound for arbitrarily narrow resonances.
+
+**Verification recorded** (550 nm; [multilayer tests](../tests/test_multilayer_dipole.py)):
+
+| Check | Result |
+|---|---|
+| Index-matched top layer vs. one-interface kernels ($\epsilon=-5+0.5i$, $2.25$, $-12+1.2i$) | agrees to $\lesssim10^{-9}$ relative |
+| Lossless 3-layer and 5-layer stacks: $F_{\operatorname{total}}-F_{\operatorname{top}}-F_{\operatorname{bottom}}$ | below $10^{-15}$ |
+| Flipping a stack swaps top and bottom channels | identical to $10^{-6}$ |
+| Recursion (48) vs. the independent `tmm` package (R and T at $20^\circ$) | agrees to $10^{-9}$ |
+| Weakly absorbing guide, $\operatorname{Im}n=3\times10^{-3}$ vs. $3\times10^{-4}$ | remainder agrees within 5% |
+
+| Example (vertical, in-plane) | $F_{\operatorname{total}}$ | $F_{\operatorname{top}}$ | $F_{\operatorname{bottom}}$ |
+|---|---:|---:|---:|
+| Lossless 5-layer, indices (1.8, 1.2, 1.0, 1.1, 1.5), layers (90, 120 emitter, 70) nm, depth 40 nm | 1.4847, 1.1344 | 0.8727, 0.6188 | 0.6120, 0.5156 |
+
+These are source-work and flux ratios for the stated synthetic stack, not device EQE.
+
+## 13. Sources and rights
 
 - [B. Auguie, planar decay-rate theory](https://nano-optics.ac.nz/planar/articles/decay_rates_theory.html):
   orientation-resolved planar Green-function formulas and integration changes.
