@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Discuss scientific consulting, optics modeling, reproducible analysis, and research software projects with Mongelli Labs.">
+  <meta property="og:title" content="Mongelli Labs | Scientific computing and software">
+  <meta property="og:description" content="Scoped scientific analysis, optics modeling, and research software projects.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://gmongell.github.io/Mathematica_python_TMM_OLEDPixel/">
+  <title>Mongelli Labs | Scientific computing and software</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172a31;
+      --muted: #50636a;
+      --teal: #075e57;
+      --cream: #f8f6ef;
+      --line: #d7dfd9;
+      --white: #fff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--cream);
+      font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    a { color: var(--teal); }
+    a:focus-visible { outline: 3px solid #d58636; outline-offset: 4px; }
+    .wrap { width: min(1120px, calc(100% - 2.5rem)); margin: 0 auto; }
+    .skip { position: absolute; left: -9999px; top: 0; }
+    .skip:focus { left: 1rem; z-index: 3; background: var(--white); padding: .5rem; }
+    header { border-bottom: 1px solid var(--line); }
+    nav { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; min-height: 76px; }
+    .brand { color: var(--ink); font-weight: 750; letter-spacing: .02em; text-decoration: none; }
+    .nav-links { display: flex; flex-wrap: wrap; align-items: center; gap: 1.4rem; }
+    .nav-links a { font-size: .9rem; font-weight: 650; text-decoration: none; }
+    .nav-links a:hover, .text-link:hover { text-decoration: underline; }
+    .hero { display: grid; grid-template-columns: 1.2fr .8fr; gap: 4rem; align-items: center; padding: 6rem 0 5rem; }
+    .eyebrow { color: var(--teal); font-size: .78rem; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+    h1, h2, h3 { line-height: 1.14; }
+    h1 { max-width: 13ch; margin: .8rem 0 1.4rem; font: 500 clamp(2.8rem, 6vw, 5rem)/1.04 Georgia, serif; letter-spacing: -.035em; }
+    h2 { margin: .5rem 0 1rem; font: 500 clamp(2rem, 4vw, 3rem)/1.12 Georgia, serif; letter-spacing: -.025em; }
+    h3 { margin: 0 0 .75rem; font-size: 1.15rem; }
+    p { margin: 0 0 1rem; }
+    .lead { max-width: 58ch; color: var(--muted); font-size: 1.13rem; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.4rem; margin-top: 2rem; }
+    .button { display: inline-block; padding: .8rem 1.15rem; border: 1px solid var(--teal); border-radius: 4px; background: var(--teal); color: var(--white); font-weight: 700; text-decoration: none; }
+    .button:hover { background: #034941; }
+    .text-link { font-weight: 700; text-decoration: none; }
+    .hero-panel { border: 1px solid var(--line); border-radius: 8px; background: var(--white); padding: 2rem; box-shadow: 0 15px 45px #173a3110; }
+    .hero-panel ul { margin: 1rem 0 0; padding: 0; list-style: none; }
+    .hero-panel li { border-top: 1px solid var(--line); padding: .85rem 0; }
+    .hero-panel li:last-child { padding-bottom: 0; }
+    section { padding: 4.5rem 0; border-top: 1px solid var(--line); }
+    .section-intro { max-width: 65ch; color: var(--muted); }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2.5rem; }
+    .card { padding: 1.6rem; border: 1px solid var(--line); border-radius: 6px; background: var(--white); }
+    .card p, .note { color: var(--muted); font-size: .96rem; }
+    .card p:last-child { margin-bottom: 0; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; }
+    .steps { margin: .5rem 0 0; padding-left: 1.4rem; }
+    .steps li { padding: 0 0 .9rem .35rem; }
+    .contact { color: var(--white); background: #123d3b; border: 0; }
+    .contact h2 { max-width: 22ch; }
+    .contact p, .contact .note { color: #d6e5df; }
+    .contact a { color: var(--white); }
+    .contact .button { border-color: var(--white); background: var(--white); color: #123d3b; }
+    .contact .button:hover { background: #e7f2eb; }
+    .contact .note { max-width: 70ch; margin-top: 1.4rem; }
+    footer { padding: 1.6rem 0; color: var(--muted); font-size: .9rem; }
+    @media (max-width: 760px) {
+      nav { align-items: flex-start; flex-direction: column; gap: .5rem; padding: 1rem 0; }
+      .nav-links { gap: 1rem; }
+      .hero, .split { grid-template-columns: 1fr; gap: 2rem; }
+      .hero { padding: 4rem 0; }
+      .cards { grid-template-columns: 1fr; }
+      section { padding: 3.5rem 0; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header>
+    <nav class="wrap" aria-label="Main navigation">
+      <a class="brand" href="#top">MONGELLI LABS</a>
+      <div class="nav-links">
+        <a href="#services">Services</a>
+        <a href="#approach">Approach</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+  <main id="main">
+    <div id="top" class="wrap hero">
+      <div>
+        <span class="eyebrow">Scientific consulting &amp; software</span>
+        <h1>Better questions. Reproducible analysis.</h1>
+        <p class="lead">Discuss a focused modeling, analysis, or software project with Mongelli Labs. Start with your research question; agree on a clear scope and deliverables before work begins.</p>
+        <div class="actions">
+          <a class="button" href="#contact">Discuss a project</a>
+          <a class="text-link" href="#services">Explore services &rarr;</a>
+        </div>
+      </div>
+      <aside class="hero-panel" aria-label="Areas of work">
+        <span class="eyebrow">Areas of work</span>
+        <ul>
+          <li>Optics, thin films, and OLED research</li>
+          <li>Numerical models and reproducibility</li>
+          <li>Scientific software and workflows</li>
+        </ul>
+      </aside>
+    </div>
+
+    <section id="services">
+      <div class="wrap">
+        <span class="eyebrow">Ways to work together</span>
+        <h2>Practical work, scoped to your goals.</h2>
+        <p class="section-intro">Choose a bounded question or discuss a larger project. The right method, inputs, and deliverables depend on the application.</p>
+        <div class="cards">
+          <article class="card">
+            <h3>Optics &amp; modeling</h3>
+            <p>Discuss planar optics, thin-film and OLED research, parameter sweeps, and comparisons with appropriate reference cases.</p>
+          </article>
+          <article class="card">
+            <h3>Analysis &amp; reproducibility</h3>
+            <p>Review a model or computational workflow, document assumptions and limitations, and develop a reproducible analysis or report.</p>
+          </article>
+          <article class="card">
+            <h3>Scientific software</h3>
+            <p>Discuss custom scripts, workflow development, or licensing of suitable existing tools. Availability, rights, and support are confirmed before a quote.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="approach">
+      <div class="wrap split">
+        <div>
+          <span class="eyebrow">From question to handoff</span>
+          <h2>Start small. Make the scope explicit.</h2>
+          <p class="section-intro">A useful engagement begins with a defined question and agreed acceptance criteria, not a promise that a prototype fits every problem.</p>
+        </div>
+        <ol class="steps">
+          <li>Share a non-confidential overview of your objective and desired outcome.</li>
+          <li>Agree in writing on the scope, fees, timing, access, and deliverables.</li>
+          <li>Review the resulting work against the agreed criteria and documented limitations.</li>
+        </ol>
+      </div>
+      <div class="wrap">
+        <p class="note">Research prototypes in the linked repository are not validated for every application. No online checkout or paid download is available on this page.</p>
+        <a class="text-link" href="https://github.com/gmongell/Mathematica_python_TMM_OLEDPixel">Explore the public optics research &rarr;</a>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <div class="wrap">
+        <span class="eyebrow" style="color: #b6e2d3">Start a conversation</span>
+        <h2>Have a research or software question?</h2>
+        <p>Describe the general problem and the outcome you are looking for. A project can be scoped before any sensitive materials are shared.</p>
+        <div class="actions">
+          <a class="button" href="https://sites.google.com/u.rochester.edu/mongelli-labs/home/contact">Contact Mongelli Labs</a>
+          <a class="text-link" href="https://github.com/gmongell/Mathematica_python_TMM_OLEDPixel/issues/new?template=project-inquiry.md">Open a public GitHub inquiry &rarr;</a>
+        </div>
+        <p class="note"><strong>Privacy:</strong> GitHub issues are public. Do not post personal contact details, credentials, customer data, or proprietary research. Arrange an appropriate transfer method before sharing project files through any channel.</p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">Mongelli Labs &middot; Scientific computing, analysis, and software</div>
+  </footer>
+</body>
+</html>
