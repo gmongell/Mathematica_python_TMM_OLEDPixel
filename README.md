@@ -68,3 +68,7 @@ The existing project notice declares Apache License 2.0 for project code. Docume
 - **Scientific citations:** References above identify relevant governing methods and computational background; citing a publication does not imply that its algorithm is implemented in this repository or that the publication was authored by this repository owner.
 - **Missing or null artifacts:** Empty, placeholder, missing, or non-executable source files must not be represented as functional implementations. Candidate restorations from personal archives require provenance, content comparison, license review, and explicit verification before committing code.
 - **Access model:** This repository is publicly readable. Public visibility does not grant anonymous push rights; write access is controlled separately through repository collaborators, credentials, apps, deploy keys, and branch rules. This README is descriptive and does not itself enforce permissions.
+
+## Scientific consulting and software inquiries
+
+Mongelli Labs welcomes inquiries about [scientific computing, analysis, and software projects](CONSULTING.md), including optics modeling and reproducibility. Use the [Mongelli Labs contact page](https://sites.google.com/u.rochester.edu/mongelli-labs/home/contact) or start a [public GitHub inquiry](https://github.com/gmongell/Mathematica_python_TMM_OLEDPixel/issues/new?template=project-inquiry.md). GitHub issues are public: do not post confidential information, credentials, or personal contact details.
